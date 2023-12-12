@@ -9,88 +9,16 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import main
-import sys    
-
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.comboBox = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBox.setGeometry(QtCore.QRect(540, 50, 181, 31))
-        self.comboBox.setObjectName("comboBox")
-        self.comboBox.setPlaceholderText('Any text')
-        # Не показывает placeholdertext из-за бага в версии библиотеки.
-        # https://stackoverflow.com/questions/65826378/how-do-i-use-qcombobox-setplaceholdertext/65830989#65830989   
-        self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
-        self.tableWidget.setGeometry(QtCore.QRect(60, 100, 661, 301))
-        self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(0)
-        self.tableWidget.setRowCount(0)
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(540, 440, 181, 31))
-        self.pushButton.setObjectName("pushButton")
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(540, 20, 181, 21))
-        self.label.setObjectName("label")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 22))
-        self.menubar.setObjectName("menubar")
-        self.menu = QtWidgets.QMenu(self.menubar)
-        self.menu.setObjectName("menu")
-        self.menu_2 = QtWidgets.QMenu(self.menubar)
-        self.menu_2.setObjectName("menu_2")
-        self.menu_3 = QtWidgets.QMenu(self.menubar)
-        self.menu_3.setObjectName("menu_3")
-        self.menu_4 = QtWidgets.QMenu(self.menubar)
-        self.menu_4.setObjectName("menu_4")
-        self.menu_5 = QtWidgets.QMenu(self.menubar)
-        self.menu_5.setObjectName("menu_5")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-        self.action = QtWidgets.QAction(MainWindow)
-        self.action.setObjectName("action")
-        self.action_2 = QtWidgets.QAction(MainWindow)
-        self.action_2.setObjectName("action_2")
-        self.action_3 = QtWidgets.QAction(MainWindow)
-        self.action_3.setObjectName("action_3")
-        self.action_4 = QtWidgets.QAction(MainWindow)
-        self.action_4.setObjectName("action_4")
-        self.menu_3.addAction(self.action)
-        self.menu_3.addAction(self.action_2)
-        self.menu_3.addAction(self.action_3)
-        self.menu_4.addAction(self.action_4)
-        self.menubar.addAction(self.menu.menuAction())
-        self.menubar.addAction(self.menu_2.menuAction())
-        self.menubar.addAction(self.menu_3.menuAction())
-        self.menubar.addAction(self.menu_4.menuAction())
-        self.menubar.addAction(self.menu_5.menuAction())
-
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-    def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.comboBox.setPlaceholderText(_translate("MainWindow", "Выбрать клиента"))
-        self.pushButton.setText(_translate("MainWindow", "Создать заказ"))
-        self.label.setText(_translate("MainWindow", "Выбрать клиента"))
-        self.menu.setTitle(_translate("MainWindow", "Список товаров"))
-        self.menu_2.setTitle(_translate("MainWindow", "Список складов"))
-        self.menu_3.setTitle(_translate("MainWindow", "Контрагенты"))
-        self.menu_4.setTitle(_translate("MainWindow", "Создать заказ"))
-        self.menu_5.setTitle(_translate("MainWindow", "Остатки"))
-        self.action.setText(_translate("MainWindow", "Клиенты"))
-        self.action_2.setText(_translate("MainWindow", "Поставщики"))
-        self.action_3.setText(_translate("MainWindow", "Подрядчики"))
-        self.action_4.setText(_translate("MainWindow", "Список заказов"))
+from main import Ui_MainWindow
+from temp import process 
 
 class Ui_Dialog(object):
+    def table(self):
+        self.table = QtWidgets.QMainWindow()
+        ui_table = Ui_MainWindow()
+        ui_table.setupUi(self.table)
+        self.table.show()
+
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(499, 499)
@@ -110,12 +38,13 @@ class Ui_Dialog(object):
         self.label.setFont(font)
         self.label.setObjectName("label")
 
-        self.window = Ui_MainWindow()
-
-        self.pushButton.clicked.connect(self.login)
-
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+        def action():
+            process(self, self.textEdit.toPlainText(), self.textEdit_2.toPlainText(), Dialog)
+
+        self.pushButton.clicked.connect(action)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -125,20 +54,12 @@ class Ui_Dialog(object):
         self.pushButton.setText(_translate("Dialog", "Войти"))
         self.label.setText(_translate("Dialog", "Вход в аккаунт"))
 
-    def login(self):
-        if self.textEdit.toPlainText() and self.textEdit_2.toPlainText():
-            # mainWindow = QtWidgets.QMainWindow()
-            # ui_window = self
-            # ui_window.setupUi(mainWindow)
-            # mainWindow.setWindowTitle(QtCore.QCoreApplication.translate("MainWindow", 'Иди нахуй'))
-            # ui_window.signal = True 
-            mainWindow = QtWidgets.QMainWindow()
-            self.window.setupUi(mainWindow)
-            mainWindow.show()
-            
+    
+        
             
 
 if __name__ == "__main__":
+    import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
     ui = Ui_Dialog()
