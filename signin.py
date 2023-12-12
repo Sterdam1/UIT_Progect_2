@@ -10,15 +10,9 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from main import Ui_MainWindow
-from temp import process 
+# from temp import process 
 
 class Ui_Dialog(object):
-    def table(self):
-        self.table = QtWidgets.QMainWindow()
-        ui_table = Ui_MainWindow()
-        ui_table.setupUi(self.table)
-        self.table.show()
-
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(499, 499)
@@ -42,7 +36,12 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
         def action():
-            process(self, self.textEdit.toPlainText(), self.textEdit_2.toPlainText(), Dialog)
+            if self.textEdit.toPlainText() and self.textEdit_2.toPlainText():
+                self.table = QtWidgets.QMainWindow()
+                ui_table = Ui_MainWindow()
+                ui_table.setupUi(self.table)
+                self.table.show()
+                Dialog.close()
 
         self.pushButton.clicked.connect(action)
 
@@ -55,7 +54,7 @@ class Ui_Dialog(object):
         self.label.setText(_translate("Dialog", "Вход в аккаунт"))
 
     
-        
+            
             
 
 if __name__ == "__main__":
