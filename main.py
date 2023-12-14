@@ -20,6 +20,13 @@ class Ui_MainWindow(object):
         self.comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.comboBox.setGeometry(QtCore.QRect(540, 50, 181, 31))
         self.comboBox.setObjectName("comboBox")
+        self.comboBox.setEditable(True)
+        self.comboBox.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
+        self.comboBox.completer().setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+
+        self.clients = ['Kostya', 'Ura', 'Adrey']
+        self.comboBox.addItems(self.clients)
+        
         self.comboBox.setPlaceholderText('Any text')
         # Не показывает placeholdertext из-за бага в версии библиотеки.
         # https://stackoverflow.com/questions/65826378/how-do-i-use-qcombobox-setplaceholdertext/65830989#65830989   
