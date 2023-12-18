@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from main import Ui_MainWindow
+import main 
 # from temp import process 
 
 class Ui_Dialog(object):
@@ -38,8 +38,8 @@ class Ui_Dialog(object):
         def action():
             if self.textEdit.toPlainText() and self.textEdit_2.toPlainText():
                 self.table = QtWidgets.QMainWindow()
-                ui_table = Ui_MainWindow()
-                ui_table.setupUi(self.table)
+                self.ui_table = main.Ui_MainWindow()
+                self.ui_table.setupMainWindow(self.table)
                 self.table.show()
                 Dialog.close()
 

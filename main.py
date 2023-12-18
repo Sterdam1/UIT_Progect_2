@@ -9,10 +9,11 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+import items
+import signin
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def setupMainWindow(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -59,6 +60,8 @@ class Ui_MainWindow(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        self.action_menu = QtWidgets.QAction(MainWindow)
+        self.action_menu.setObjectName("action_menu")
         self.action = QtWidgets.QAction(MainWindow)
         self.action.setObjectName("action")
         self.action_2 = QtWidgets.QAction(MainWindow)
@@ -67,18 +70,33 @@ class Ui_MainWindow(object):
         self.action_3.setObjectName("action_3")
         self.action_4 = QtWidgets.QAction(MainWindow)
         self.action_4.setObjectName("action_4")
+        # self.menu.addAction(self.action_menu)
         self.menu_3.addAction(self.action)
         self.menu_3.addAction(self.action_2)
         self.menu_3.addAction(self.action_3)
         self.menu_4.addAction(self.action_4)
+
+        # Q1: как менять юи не создавая новое окно
+        def on_triggered():
+            self.itemsWindow = QtWidgets.QMainWindow()
+            ui_items = items.Ui_MainWindow()
+            ui_items.setupItems(self.itemsWindow)
+            self.itemsWindow.show()
+            MainWindow.close()
+            print('asdada')
+
+        self.menu.aboutToShow.connect(on_triggered)
         self.menubar.addAction(self.menu.menuAction())
         self.menubar.addAction(self.menu_2.menuAction())
         self.menubar.addAction(self.menu_3.menuAction())
         self.menubar.addAction(self.menu_4.menuAction())
-        self.menubar.addAction(self.menu_5.menuAction())
+        self.menubar.addAction(self.menu_5.menuAction())    
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+    
+    
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -102,6 +120,6 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    ui.setupMainWindow(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
