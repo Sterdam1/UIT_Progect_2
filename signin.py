@@ -9,19 +9,12 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import main 
-# from temp import process 
+import main
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(499, 499)
-        self.textEdit = QtWidgets.QTextEdit(Dialog)
-        self.textEdit.setGeometry(QtCore.QRect(170, 150, 181, 31))
-        self.textEdit.setObjectName("textEdit")
-        self.textEdit_2 = QtWidgets.QTextEdit(Dialog)
-        self.textEdit_2.setGeometry(QtCore.QRect(170, 210, 181, 31))
-        self.textEdit_2.setObjectName("textEdit_2")
         self.pushButton = QtWidgets.QPushButton(Dialog)
         self.pushButton.setGeometry(QtCore.QRect(180, 280, 161, 41))
         self.pushButton.setObjectName("pushButton")
@@ -31,12 +24,15 @@ class Ui_Dialog(object):
         font.setPointSize(20)
         self.label.setFont(font)
         self.label.setObjectName("label")
-
-        self.retranslateUi(Dialog)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.lineEdit = QtWidgets.QLineEdit(Dialog)
+        self.lineEdit.setGeometry(QtCore.QRect(170, 150, 181, 31))
+        self.lineEdit.setObjectName("lineEdit")
+        self.lineEdit_2 = QtWidgets.QLineEdit(Dialog)
+        self.lineEdit_2.setGeometry(QtCore.QRect(170, 210, 181, 31))
+        self.lineEdit_2.setObjectName("lineEdit_2")
 
         def action():
-            if self.textEdit.toPlainText() and self.textEdit_2.toPlainText():
+            if self.lineEdit.text() and self.lineEdit_2.text():
                 self.table = QtWidgets.QMainWindow()
                 self.ui_table = main.Ui_MainWindow()
                 self.ui_table.setupMainWindow(self.table)
@@ -45,17 +41,17 @@ class Ui_Dialog(object):
 
         self.pushButton.clicked.connect(action)
 
+        self.retranslateUi(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(Dialog)
+
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.textEdit.setPlaceholderText(_translate("Dialog", "Логин")) 
-        self.textEdit_2.setPlaceholderText(_translate("Dialog", "Пароль"))
         self.pushButton.setText(_translate("Dialog", "Войти"))
         self.label.setText(_translate("Dialog", "Вход в аккаунт"))
+        self.lineEdit.setPlaceholderText(_translate("Dialog", "Логин"))
+        self.lineEdit_2.setPlaceholderText(_translate("Dialog", "Пароль"))
 
-    
-            
-            
 
 if __name__ == "__main__":
     import sys
