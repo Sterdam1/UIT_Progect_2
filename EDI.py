@@ -13,7 +13,7 @@ def edi_export(doctype='sell', date='', number="",
     :param doctype: type of document - one of [sell(S),pass(P),waybill(W),move(M), write-off(O)]
     :param date: date of document creation [S,M,O,W]
     :param number: number of document [S,M,O,W]
-    :param reciever: one who recieves goods[S,M,W]
+    :param reciever: one who recieves goods [S,M,W]
     :param sender: one who sends goods [S,M,O,W]
     :param goods: dict of goods transfered or dict of a good properties[S,W,O,M,P]
     :param pass_num: passport number [P]
@@ -21,7 +21,7 @@ def edi_export(doctype='sell', date='', number="",
     :param pass_exp_date: date passport expires [P]
     :param contract_num: number of contract between organiztions [M,W]
     :param driver: driver name [M,W]
-    :param proxy: driver name [W]
+    :param proxy: proxy number [W]
     :param reason: reason for write-off or anything else [O]
     :return: tuple(len=2) names of the files created
     """
@@ -157,82 +157,83 @@ def edi_export(doctype='sell', date='', number="",
                + number + '_' + date + '.xlsx'
 
 
-# edi_export(date='12.12.2023',
-#            reciever='Андрей',
-#            sender='Костя',
-#            goods={'готовый проект': {'amount': 1,
-#                                      'price': 1000,
-#                                      'mass': 'very heavy'
-#                                      }})
+edi_export(date='12.12.2023',
+           reciever='Андрей',
+           number='1',
+           sender='Костя',
+           goods={'готовый проект': {'amount': 1,
+                                     'price': 1000,
+                                     'mass': 'very heavy'
+                                     }})
 
-# edi_export(doctype='passport',
-#            pass_num=1707,
-#            date='12.13.2023',
-#            pass_date='11.13.2023',
-#            pass_exp_date='не ограничен',
-#            goods={'готовый проект': {'душность': 100,
-#                                      'стабильность': 0.1,
-#                                      'масса': 'very heavy',
-#                                      'exp_date': 'не ограничен'
-#                                      }})
-
-
-# edi_export(number='1',
-#            doctype='move_in',
-#            contract_num='12312',
-#            driver='Ярик',
-#            date='12.12.2023',
-#            reciever='ООО АЮК',
-#            sender='Бабушка',
-#            goods={'техзадание': {'amount': 1,
-#                                      'price': 1000,
-#                                      'mass': 'невыносимая'
-#                                  }})
-
-# edi_export(number='1',
-#            doctype='move_out',
-#            contract_num='12312',
-#            driver='Ярик',
-#            date='12.12.2023',
-#            reciever='Бабушка',
-#            sender='ООО АЮК',
-#            goods={'готовый проект': {'amount': 1,
-#                                      'price': 1000,
-#                                      'mass': '28 тысяч коммитов! ты дейстовал наверняка'
-#                                  }})
-
-# edi_export(number='1',
-#            doctype='write-off',
-#            date='12.12.2023',
-#            sender='ООО АЮК',
-#            reason='перегорели',
-#            goods={'человеческие мозги': {'amount': 3,
-#                                      'price': 1000,
-#                                      'mass': '1 кг'
-#                                  }})
-
-# edi_export(number='1',
-#            doctype='write-off',
-#            date='12.12.2023',
-#            sender='ООО АЮК',
-#            reason='перегорели',
-#            goods={'человеческие мозги': {'amount': 3,
-#                                      'price': 1000,
-#                                      'mass': '1 кг'
-#                                  }})
+edi_export(doctype='passport',
+           pass_num=1707,
+           date='12.13.2023',
+           pass_date='11.13.2023',
+           pass_exp_date='не ограничен',
+           goods={'готовый проект': {'душность': 100,
+                                     'стабильность': 0.1,
+                                     'масса': 'very heavy',
+                                     'exp_date': 'не ограничен'
+                                     }})
 
 
-# edi_export(number='1',
-#            doctype='waybill',
-#            contract_num='12312',
-#            driver='Ярик',
-#            date='12.12.2023',
-#            reciever='Бабушка',
-#            sender='ООО АЮК',
-#            goods={'готовый проект': {'amount': 1,
-#                                      'price': 1000,
-#                                      'mass': '28 тысяч коммитов! ты дейстовал наверняка'
-#                                      }})
+edi_export(number='1',
+           doctype='move_in',
+           contract_num='12312',
+           driver='Ярик',
+           date='12.12.2023',
+           reciever='ООО АЮК',
+           sender='Бабушка',
+           goods={'техзадание': {'amount': 1,
+                                     'price': 1000,
+                                     'mass': 'невыносимая'
+                                 }})
+
+edi_export(number='1',
+           doctype='move_out',
+           contract_num='12312',
+           driver='Ярик',
+           date='12.12.2023',
+           reciever='Бабушка',
+           sender='ООО АЮК',
+           goods={'готовый проект': {'amount': 1,
+                                     'price': 1000,
+                                     'mass': '28 тысяч коммитов! ты дейстовал наверняка'
+                                 }})
+
+edi_export(number='1',
+           doctype='write-off',
+           date='12.12.2023',
+           sender='ООО АЮК',
+           reason='перегорели',
+           goods={'человеческие мозги': {'amount': 3,
+                                     'price': 1000,
+                                     'mass': '1 кг'
+                                 }})
+
+edi_export(number='1',
+           doctype='write-off',
+           date='12.12.2023',
+           sender='ООО АЮК',
+           reason='перегорели',
+           goods={'человеческие мозги': {'amount': 3,
+                                     'price': 1000,
+                                     'mass': '1 кг'
+                                 }})
+
+
+edi_export(number='1',
+           doctype='waybill',
+           contract_num='12312',
+           driver='Ярик',
+           date='12.12.2023',
+           reciever='Бабушка',
+           sender='ООО АЮК',
+           goods={'готовый проект': {'amount': 1,
+                                     'price': 1000,
+                                     'mass': '28 тысяч коммитов! ты дейстовал наверняка'
+                                     }})
 
 
 

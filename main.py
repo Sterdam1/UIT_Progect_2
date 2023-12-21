@@ -78,7 +78,7 @@ class Ui_MainWindow(object):
         self.people = QtWidgets.QWidget()
         self.people.setObjectName("people")
         self.tabWidget_2 = QtWidgets.QTabWidget(self.people)
-        self.tabWidget_2.setGeometry(QtCore.QRect(0, 0, 811, 551))
+        self.tabWidget_2.setGeometry(QtCore.QRect(0, -4, 811, 551))
         self.tabWidget_2.setMovable(False)
         self.tabWidget_2.setObjectName("tabWidget_2")
         self.clients = QtWidgets.QWidget()
