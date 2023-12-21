@@ -9,7 +9,8 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from functools import partial
+import addline
 
 class Ui_MainWindow(object):
     def setupMainWindow(self, MainWindow):
@@ -229,8 +230,24 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(3)
-        self.tabWidget_2.setCurrentIndex(2)
+        self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        self.pushButton_4.clicked.connect(partial(self.addLine, 'Товар'))
+        self.pushButton_9.clicked.connect(partial(self.addLine, 'Склад'))
+        self.pushButton_18.clicked.connect(partial(self.addLine, 'Клиента'))
+        self.pushButton_22.clicked.connect(partial(self.addLine, 'Поставщика'))
+        self.pushButton_26.clicked.connect(partial(self.addLine, 'Подрядчика'))
+        self.pushButton_9.clicked.connect(partial(self.addLine, 'Склад'))
+
+    def addLine(self, name):
+        # Должна быть строчка которая генерирует колонки таблицы
+        self.add_line = QtWidgets.QMainWindow()
+        addLine = addline.Ui_MainWindow()
+        addLine.setupAddLine(self.add_line)
+        addLine.label.setText(f'Добавить {name}')
+        self.add_line.show()
+        
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -254,7 +271,7 @@ class Ui_MainWindow(object):
         self.label_6.setText(_translate("MainWindow", "Клиенты"))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.clients), _translate("MainWindow", "Клиенты"))
         self.pushButton_19.setText(_translate("MainWindow", "Удалить"))
-        self.label_7.setText(_translate("MainWindow", "Подставщики"))
+        self.label_7.setText(_translate("MainWindow", "Поставщики"))
         self.pushButton_20.setText(_translate("MainWindow", "Сохранить"))
         self.pushButton_21.setText(_translate("MainWindow", "Отменить"))
         self.pushButton_22.setText(_translate("MainWindow", "Добавить"))
@@ -287,6 +304,6 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    ui.setupMainWindow(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
