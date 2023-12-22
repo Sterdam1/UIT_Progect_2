@@ -7,7 +7,7 @@ if con:
         del_query = [i[0] for i in del_query.fetchall() if i[0] != 'sqlite_sequence']
         print(del_query)
         if del_query:
-            print('base erased and dead now')
+            print('base is dead now')
             for i in del_query:
                 con.execute(f"""
                         DROP TABLE IF EXISTS '{i}'
