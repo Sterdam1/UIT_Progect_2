@@ -1,5 +1,7 @@
 import sqlite3 as sl
+
 connect = sl.connect('deitabeiza.db')
+
 
 # req file
 class Double_Dragon:
@@ -16,6 +18,34 @@ class Double_Dragon:
             for i in range(len(goods)):
                 goods[i] = goods[i][1:]
             return rus, goods
+
+    def get_table_names(self) -> list:
+        """
+        gets all table names as strings.
+
+        :return: table names
+        :rtype: list
+        """
+        with self.con as con:
+            names = con.execute("""SELECT name FROM sqlite_master  
+          WHERE type='table'; """)
+            names = [i[0] for i in names.fetchall() if i[0] != 'sqlite_sequence']
+        return names
+
+    def get_table_by_name(self, name: str) -> list:
+        """
+        gets all from a table.
+
+        :param name: table name as string, as example 'Goods'
+        :return: all table contains
+        :rtype: list
+        """
+        with self.con as con:
+            goods = con.execute(f""" select * from '{name}' """).fetchall()
+        return goods
+
+
+
 
 db = Double_Dragon()
 
