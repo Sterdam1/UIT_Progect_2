@@ -4,10 +4,67 @@ connect = sl.connect('deitabeiza.db')
 
 
 # req file
-class Double_Dragon:
+class DoubleDragon:
+    dicty_to_rus = {
+        'category_id': 'идентификатор категории',
+        'vendor_сode': 'артикул',
+        'mass': 'масса',
+        'properties_json': 'свойства в формате JSON',
+        'depot_id': 'идентификатор склада',
+        'flag_expired': 'флаг просроченности',
+        'expiration_date': 'дата истечения срока годности',
+        'on_hold': 'на удержании',
+        'id': "идентификатор",
+        'price': 'цена товара',
+        'good_name': 'название товара',
+        'good_id': 'идентификатор товара',
+        'amount': 'количество',
+        'group_id': 'идентификатор группы',
+        'category_name': 'название категории',
+        'depot_name': 'название склада',
+        'location_text': 'адрес',
+        'location_gps': 'координаты GPS',
+        'order_id': 'идентификатор заказа',
+        'doc_id': 'идентификатор документа',
+        'name': 'имя',
+        'org_name': 'название организации',
+        'phone': 'телефон',
+        'location': 'местоположение',
+        'unp': 'УНП',
+        'type': 'тип',
+        'doc_type': 'тип документа',
+        'prefix': 'префикс',
+        'number': 'номер',
+        'sender': 'отправитель',
+        'receiver': 'получатель',
+        'date': 'дата',
+        'driver': 'водитель',
+        'pass_issued': 'дата выдачи паспорта',
+        'pass_expired': 'дата истечения срока действия паспорта',
+        'proxy': 'хз что явно не прокси сервер',
+        'contract_num': 'номер контракта',
+        'time_placed': 'время размещения заказа',
+        'delivery_time': 'время доставки',
+        'state': 'состояние',
+        'total_price': 'общая стоимость',
+        'driver_id': 'идентификатор водителя'}
+
     def __init__(self):
         global connect
         self.con = connect
+
+    def get_rus_columns(self, name: str) -> list:
+        """
+        gets all column names in table in russian.
+        :param name: table name as string, as example 'Goods'
+        """
+        rus_listy = []
+        with self.con as con:
+            result = con.execute(f'''select * from pragma_table_info('{name}')''').fetchall()
+            listy = [i[1] for i in result]
+            for i in listy:
+                rus_listy.append(DoubleDragon.dicty_to_rus[i])
+        return rus_listy
 
     def get_good(self):
         rus = ['Название товара', 'Цена товара', 'Категория товара', 'Артикул', 'Масса товара',
@@ -100,7 +157,7 @@ class Double_Dragon:
                             WHERE id = {id} ''')
 
 
-db = Double_Dragon()
+db = DoubleDragon()
 
 # misc shit nothing to see here
 """
