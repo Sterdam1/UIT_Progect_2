@@ -244,7 +244,7 @@ class Ui_MainWindow(object):
         table_colums = db.get_good()[0]
         table_items = db.get_good()[1]
         print(len(table_items))
-        self.tableWidget_2.setColumnCount(len(table_colums)+1)
+        self.tableWidget_2.setColumnCount(len(table_colums))
         self.tableWidget_2.setHorizontalHeaderLabels(table_colums)
         self.tableWidget_2.horizontalHeader().setDefaultSectionSize(150)
         self.tableWidget_2.setRowCount(len(table_items))
