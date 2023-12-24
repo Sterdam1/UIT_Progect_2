@@ -110,13 +110,13 @@ class DoubleDragon:
             table_content = con.execute(f""" select * from '{name}' """).fetchall()
             return [table_content[i][1:] for i in range(len(table_content))]
 
-    def get_items(self, table_name: str, values, by='id') -> list:
+    def get_items(self, table_name: str, values, by: str) -> list:
         """
         returns list of items searched by value (string or tuple). includes all matches i.e. 'in' not '=' in sqlite
 
         :param table_name: table name as string, as example 'Goods'
         :param values: tuple (if tuple - at least 2 items) i.e. ('Шоколад','Книга') or string of text i.e. 'Шоколад'
-        :param by: string of text by which you filter table content
+        :param by: string of text by which you filter table content, as example 'id'
         :return: list of matches
         :rtype: list
         """
@@ -135,13 +135,13 @@ class DoubleDragon:
         :rtype: list
         """
         with self.con as con:
-            if with_id:
-                return con.execute(f""" select id, good_name, price, category_name, vendor_сode, mass, properties_json, 
+            req = con.execute(f""" select id, good_name, price, category_name, vendor_сode, mass, properties_json, 
                 depot_name, flag_expired, expiration_date, amount, on_hold, doc_id from Goods 
                 INNER JOIN Category ON Goods.category_id = Category.cat_id 
                 INNER JOIN Depots ON Goods.depot_id = Depots.dep_id """).fetchall()
-            table_content = con.execute(f""" select * from Goods """).fetchall()
-            return [table_content[i][1:] for i in range(len(table_content))]
+            if with_id:
+                return req
+            return [req[i][1:] for i in range(len(req))]
 
     def del_table_content_by_ids(self, name: str, ids: list):
         """
@@ -172,20 +172,17 @@ class DoubleDragon:
             listy = tuple([i[1] for i in result if i[1] != 'id'])
             con.execute(f'''insert into '{name}' {listy} values {values}''')
 
-    # ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
-    def insert_docs(self, name: str, values: tuple):
+    def insert_docs(self, doc_type=None, prefix=None, number=None, sender=None, receiver=None,
+                    date=None, driver=None, pass_issued=None, pass_expired=None, proxy=None, contract_num=None):
         """
-        insert values into table. required name of table and tuple of values. id is not required
-
-        :param name: table name as string, as example 'Goods'
-        :param values: tuple of values i.e. ('Книга', 350.0, 1, 1234, 0.5, 'Book_1.json', 1, 0, '2024-06-30', 50, 20, 0))
+        pretty much work in progress
+        maybe good enough?
+        all of the parameters in oder of appearance in DB
         """
         with self.con as con:
-            result = con.execute(f'''select * from pragma_table_info('{name}')''').fetchall()
-            listy = tuple([i[1] for i in result if i[1] != 'id'])
-            con.execute(f'''insert into '{name}' {listy} values {values}''')
-
-    # ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+            con.execute(f'''insert into Docs (doc_type, prefix, number, sender, receiver, 
+            date, driver, pass_issued, pass_expired, proxy, contract_num) values {doc_type, prefix, number, sender,
+                                                                                  receiver, date, driver, pass_issued, pass_expired, proxy, contract_num} ''')
 
     # the same as it ever was
     def update_cell(self, table: str, id: int, param: str, value: any):
@@ -204,6 +201,5 @@ db = DoubleDragon()
 
 # misc shit nothing to see here
 """
-
         select * from pragma_table_info('tblName')
 """
