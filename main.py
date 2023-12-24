@@ -9,8 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from functools import partial
-import addline
+
 
 class Ui_MainWindow(object):
     def setupMainWindow(self, MainWindow):
@@ -163,19 +162,25 @@ class Ui_MainWindow(object):
         self.create_order = QtWidgets.QWidget()
         self.create_order.setObjectName("create_order")
         self.pushButton = QtWidgets.QPushButton(self.create_order)
-        self.pushButton.setGeometry(QtCore.QRect(550, 470, 181, 31))
+        self.pushButton.setGeometry(QtCore.QRect(540, 460, 181, 31))
         self.pushButton.setObjectName("pushButton")
         self.tableWidget = QtWidgets.QTableWidget(self.create_order)
-        self.tableWidget.setGeometry(QtCore.QRect(70, 130, 661, 301))
+        self.tableWidget.setGeometry(QtCore.QRect(60, 120, 661, 301))
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
         self.label = QtWidgets.QLabel(self.create_order)
-        self.label.setGeometry(QtCore.QRect(550, 50, 181, 21))
+        self.label.setGeometry(QtCore.QRect(540, 40, 181, 21))
         self.label.setObjectName("label")
         self.comboBox = QtWidgets.QComboBox(self.create_order)
-        self.comboBox.setGeometry(QtCore.QRect(550, 80, 181, 31))
+        self.comboBox.setGeometry(QtCore.QRect(540, 70, 181, 31))
         self.comboBox.setObjectName("comboBox")
+        self.label_9 = QtWidgets.QLabel(self.create_order)
+        self.label_9.setGeometry(QtCore.QRect(60, 30, 281, 61))
+        font = QtGui.QFont()
+        font.setPointSize(25)
+        self.label_9.setFont(font)
+        self.label_9.setObjectName("label_9")
         self.tabWidget.addTab(self.create_order, "")
         self.order_list = QtWidgets.QWidget()
         self.order_list.setObjectName("order_list")
@@ -233,22 +238,6 @@ class Ui_MainWindow(object):
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        self.pushButton_4.clicked.connect(partial(self.addLine, 'Товар'))
-        self.pushButton_9.clicked.connect(partial(self.addLine, 'Склад'))
-        self.pushButton_18.clicked.connect(partial(self.addLine, 'Клиента'))
-        self.pushButton_22.clicked.connect(partial(self.addLine, 'Поставщика'))
-        self.pushButton_26.clicked.connect(partial(self.addLine, 'Подрядчика'))
-        self.pushButton_9.clicked.connect(partial(self.addLine, 'Склад'))
-
-    def addLine(self, name):
-        # Должна быть строчка которая генерирует колонки таблицы
-        self.add_line = QtWidgets.QMainWindow()
-        addLine = addline.Ui_MainWindow()
-        addLine.setupAddLine(self.add_line)
-        addLine.label.setText(f'Добавить {name}')
-        self.add_line.show()
-        
-
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -271,7 +260,7 @@ class Ui_MainWindow(object):
         self.label_6.setText(_translate("MainWindow", "Клиенты"))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.clients), _translate("MainWindow", "Клиенты"))
         self.pushButton_19.setText(_translate("MainWindow", "Удалить"))
-        self.label_7.setText(_translate("MainWindow", "Поставщики"))
+        self.label_7.setText(_translate("MainWindow", "Подставщики"))
         self.pushButton_20.setText(_translate("MainWindow", "Сохранить"))
         self.pushButton_21.setText(_translate("MainWindow", "Отменить"))
         self.pushButton_22.setText(_translate("MainWindow", "Добавить"))
@@ -286,6 +275,7 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "Создать заказ"))
         self.label.setText(_translate("MainWindow", "Выбрать клиента"))
         self.comboBox.setPlaceholderText(_translate("MainWindow", "Выбрать клиента"))
+        self.label_9.setText(_translate("MainWindow", "Создание заказа"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.create_order), _translate("MainWindow", "Создать заказ"))
         self.pushButton_10.setText(_translate("MainWindow", "Удалить"))
         self.label_4.setText(_translate("MainWindow", "Заказы"))
