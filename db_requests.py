@@ -5,7 +5,24 @@ connect = sl.connect('deitabeiza.db')
 
 # req file
 class DoubleDragon:
+    table_names_dicty = {
+        'Category': 'Категория',
+        'Goods': 'Товары',
+        'Depots': 'Склады',
+        'Goods_list': 'Список товаров',
+        'Bridge': 'Мост',
+        'Oder': 'Заказ',
+        'Docs': 'Документы',
+        'Contractors': 'Контрагенты'
+    }
     dicty_to_rus = {
+        'cat_id': 'идентификатор категории',
+        'dep_id': 'идентификатор склада',
+        'br_id': 'идентификатор моста',
+        'od_id': 'идентификатор заказа',
+        'con_id': 'идентификатор контрагента',
+        'docs_id': 'идентификатор документа',
+        'list_id': 'идентификатор списка товаров',
         'category_id': 'идентификатор категории',
         'vendor_сode': 'артикул',
         'mass': 'масса',
@@ -41,7 +58,7 @@ class DoubleDragon:
         'driver': 'водитель',
         'pass_issued': 'дата выдачи паспорта',
         'pass_expired': 'дата истечения срока действия паспорта',
-        'proxy': 'хз что явно не прокси сервер',
+        'proxy': 'доверенность',
         'contract_num': 'номер контракта',
         'time_placed': 'время размещения заказа',
         'delivery_time': 'время доставки',
@@ -66,16 +83,6 @@ class DoubleDragon:
                 rus_listy.append(DoubleDragon.dicty_to_rus[i])
         return rus_listy
 
-    def get_good(self):
-        rus = ['Название товара', 'Цена товара', 'Категория товара', 'Артикул', 'Масса товара',
-               'Название файла характеристик', 'Название склада', 'Испорчен', 'Срок годности',
-               'Количество доступно', 'Количество в ожидании']
-        with self.con as con:
-            goods = con.execute(""" select * from Goods """).fetchall()
-            for i in range(len(goods)):
-                goods[i] = goods[i][1:]
-            return rus, goods
-
     def get_table_names(self) -> list:
         """
         gets all table names as strings. except temporal ones.
@@ -88,20 +95,24 @@ class DoubleDragon:
           WHERE type='table'; """)
         return [i[0] for i in names.fetchall() if i[0] != 'sqlite_sequence']
 
-    def get_table_by_name(self, name: str) -> list:
+    def get_table_by_name(self, name: str, with_id=False) -> list:
         """
         gets all from a table.
 
         :param name: table name as string, as example 'Goods'
+        :param with_id: True if id is needed
         :return: all table contains
         :rtype: list
         """
         with self.con as con:
-            return con.execute(f""" select * from '{name}' """).fetchall()
+            if with_id:
+                return con.execute(f""" select * from '{name}' """).fetchall()
+            table_content = con.execute(f""" select * from '{name}' """).fetchall()
+            return [table_content[i][1:] for i in range(len(table_content))]
 
     def get_items(self, table_name: str, values, by='id') -> list:
         """
-        returns list of items searched by any value.
+        returns list of items searched by value (string or tuple). includes all matches i.e. 'in' not '=' in sqlite
 
         :param table_name: table name as string, as example 'Goods'
         :param values: tuple (if tuple - at least 2 items) i.e. ('Шоколад','Книга') or string of text i.e. 'Шоколад'
@@ -112,8 +123,25 @@ class DoubleDragon:
         with self.con as con:
             if type(values) == str:
                 values = "'" + values + "'"
-                return con.execute(f""" select * from '{table_name}' where {by} = {values} """).fetchall()
+                return con.execute(f""" select * from '{table_name}' where {by} in ({values}) """).fetchall()
             return con.execute(f""" select * from '{table_name}' where {by} in {values} """).fetchall()
+
+    def get_fancy_goods(self, with_id=False) -> list:
+        """
+        gets all from a Goods table for end user without other tables ids.
+
+        :param with_id: True if id is needed
+        :return: table contains
+        :rtype: list
+        """
+        with self.con as con:
+            if with_id:
+                return con.execute(f""" select id, good_name, price, category_name, vendor_сode, mass, properties_json, 
+                depot_name, flag_expired, expiration_date, amount, on_hold, doc_id from Goods 
+                INNER JOIN Category ON Goods.category_id = Category.cat_id 
+                INNER JOIN Depots ON Goods.depot_id = Depots.dep_id """).fetchall()
+            table_content = con.execute(f""" select * from Goods """).fetchall()
+            return [table_content[i][1:] for i in range(len(table_content))]
 
     def del_table_content_by_ids(self, name: str, ids: list):
         """
@@ -144,6 +172,21 @@ class DoubleDragon:
             listy = tuple([i[1] for i in result if i[1] != 'id'])
             con.execute(f'''insert into '{name}' {listy} values {values}''')
 
+    # ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+    def insert_docs(self, name: str, values: tuple):
+        """
+        insert values into table. required name of table and tuple of values. id is not required
+
+        :param name: table name as string, as example 'Goods'
+        :param values: tuple of values i.e. ('Книга', 350.0, 1, 1234, 0.5, 'Book_1.json', 1, 0, '2024-06-30', 50, 20, 0))
+        """
+        with self.con as con:
+            result = con.execute(f'''select * from pragma_table_info('{name}')''').fetchall()
+            listy = tuple([i[1] for i in result if i[1] != 'id'])
+            con.execute(f'''insert into '{name}' {listy} values {values}''')
+
+    # ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
+
     # the same as it ever was
     def update_cell(self, table: str, id: int, param: str, value: any):
         """
@@ -161,32 +204,6 @@ db = DoubleDragon()
 
 # misc shit nothing to see here
 """
-        Название
-        товара                               good_name TEXT,
-                                            price REAL,
-                                            category_id,
-                                            vendor_сode INTEGER,
-                                            mass REAL,
-                                            properties_json TEXT,
-                                            depot_id,
-                                            flag_expired INTEGER,
-                                            expiration_date TEXT,
-                                            amount,
-                                            on_hold INTEGER
-        
-        Категория
-        товара
-        
-        Артикул
-        
-        Срок
-        годности
-        
-        Остаток
-        
-        Номер
-        паспорта
-        
-        Масса
+
         select * from pragma_table_info('tblName')
 """

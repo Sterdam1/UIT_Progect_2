@@ -240,9 +240,12 @@ class Ui_MainWindow(object):
 
         self.pushButton.clicked.connect(self.gen_table)
 
+
     def gen_table(self):
-        table_colums = db.get_good()[0]
-        table_items = db.get_good()[1]
+        table_colums = db.get_rus_columns('Goods')[1:] # сам просил id первым, поэтому с 1 индекса а не 0
+        table_colums[3], table_colums[7] = 'название категории', 'название склада' # смена с названий с id на более приемлимые - думаю проще в коде сделать чем ломать функциями
+        #table_items = db.get_table_by_name('Goods') # по дефолту будет возвращать без id; словарь переводов названий таблиц можно достать при помощи db.table_names_dicty -> {eng:rus ...
+        table_items = db.get_fancy_goods() # добавил функию конкретно для Goods с заменой id других таблиц на другие данные, функция выше для получения дефолтных данных
         print(len(table_items))
         self.tableWidget_2.setColumnCount(len(table_colums))
         self.tableWidget_2.setHorizontalHeaderLabels(table_colums)
@@ -312,3 +315,4 @@ if __name__ == "__main__":
     ui.setupMainWindow(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+

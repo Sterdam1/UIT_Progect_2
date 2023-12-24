@@ -97,7 +97,7 @@ with con:
     # Goods_list
     con.execute('''
                     CREATE TABLE IF NOT EXISTS Goods_list(
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    list_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     good_id INTEGER,
                     amount FLOAT,
                     group_id INTEGER)
@@ -107,7 +107,7 @@ with con:
     # Category
     con.execute('''
                     CREATE TABLE IF NOT EXISTS Category(
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    cat_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     category_name TEXT)
                     ''')
     print('Category created')
@@ -115,7 +115,7 @@ with con:
     # Depots
     con.execute('''
                     CREATE TABLE IF NOT EXISTS Depots(
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    dep_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     depot_name TEXT,
                     location_text TEXT,
                     location_gps TEXT)
@@ -125,7 +125,7 @@ with con:
     # Bridge
     con.execute('''
                     CREATE TABLE IF NOT EXISTS Bridge(
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    br_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     order_id,
                     doc_id INTEGER)
                     ''')
@@ -134,7 +134,7 @@ with con:
     # Contractors
     con.execute('''
                     CREATE TABLE IF NOT EXISTS Contractors(
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    con_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     name,
                     org_name TEXT,
                     phone INTEGER,
@@ -147,7 +147,7 @@ with con:
     # Docs
     con.execute('''
                     CREATE TABLE IF NOT EXISTS Docs(
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    docs_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     doc_type TEXT,
                     prefix TEXT,
                     number INTEGER,
@@ -165,7 +165,7 @@ with con:
     # Oder
     con.execute('''                                                                    
                     CREATE TABLE IF NOT EXISTS Oder(
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    od_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     time_placed TEXT,
                     delivery_time TEXT,
                     state TEXT,
