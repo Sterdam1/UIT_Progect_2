@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from db_requests import db
 
 class Ui_MainWindow(object):
     def setupMainWindow(self, MainWindow):
@@ -30,8 +30,8 @@ class Ui_MainWindow(object):
         self.tableWidget_2 = QtWidgets.QTableWidget(self.items)
         self.tableWidget_2.setGeometry(QtCore.QRect(60, 120, 661, 301))
         self.tableWidget_2.setObjectName("tableWidget_2")
-        self.tableWidget_2.setColumnCount(0)
         self.tableWidget_2.setRowCount(0)
+        self.gen_table()
         self.pushButton_3 = QtWidgets.QPushButton(self.items)
         self.pushButton_3.setGeometry(QtCore.QRect(340, 460, 181, 31))
         self.pushButton_3.setObjectName("pushButton_3")
@@ -237,6 +237,21 @@ class Ui_MainWindow(object):
         self.tabWidget.setCurrentIndex(3)
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        self.pushButton.clicked.connect(self.gen_table)
+
+    def gen_table(self):
+        table_colums = db.get_good()[0]
+        table_items = db.get_good()[1]
+        print(len(table_items))
+        self.tableWidget_2.setColumnCount(len(table_colums))
+        self.tableWidget_2.setHorizontalHeaderLabels(table_colums)
+        self.tableWidget_2.horizontalHeader().setDefaultSectionSize(150)
+        self.tableWidget_2.setRowCount(len(table_items))
+
+        for row in range(self.tableWidget_2.rowCount()):
+            for col in range(self.tableWidget_2.columnCount()):
+                self.tableWidget_2.setItem(row, col, QtWidgets.QTableWidgetItem(str(table_items[row][col])))
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
