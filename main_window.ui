@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>3</number>
     </property>
     <property name="usesScrollButtons">
      <bool>false</bool>
@@ -216,7 +216,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="movable">
        <bool>false</bool>
@@ -485,8 +485,8 @@
      <widget class="QPushButton" name="pushButton">
       <property name="geometry">
        <rect>
-        <x>550</x>
-        <y>470</y>
+        <x>540</x>
+        <y>460</y>
         <width>181</width>
         <height>31</height>
        </rect>
@@ -498,8 +498,8 @@
      <widget class="QTableWidget" name="tableWidget">
       <property name="geometry">
        <rect>
-        <x>70</x>
-        <y>130</y>
+        <x>60</x>
+        <y>120</y>
         <width>661</width>
         <height>301</height>
        </rect>
@@ -508,8 +508,8 @@
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>550</x>
-        <y>50</y>
+        <x>540</x>
+        <y>40</y>
         <width>181</width>
         <height>21</height>
        </rect>
@@ -521,14 +521,32 @@
      <widget class="QComboBox" name="comboBox">
       <property name="geometry">
        <rect>
-        <x>550</x>
-        <y>80</y>
+        <x>540</x>
+        <y>70</y>
         <width>181</width>
         <height>31</height>
        </rect>
       </property>
-      <property name="placeholderText" stdset="0">
+      <property name="placeholderText">
        <string>Выбрать клиента</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>30</y>
+        <width>281</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>25</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Создание заказа</string>
       </property>
      </widget>
     </widget>
@@ -671,7 +689,7 @@
         <height>31</height>
        </rect>
       </property>
-      <property name="placeholderText" stdset="0">
+      <property name="placeholderText">
        <string>Выбрать склад</string>
       </property>
      </widget>
