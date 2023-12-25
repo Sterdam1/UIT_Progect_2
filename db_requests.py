@@ -150,8 +150,6 @@ class DoubleDragon:
         :param name: table name as string, as example 'Goods'
         :param ids: list of id, as example [1, 2, 3] or [4]
         """
-        print(f'''DELETE FROM '{name}'
-                            WHERE id in {ids}''')
         with self.con as con:
             if len(ids) > 1:
                 ids = tuple(ids)
@@ -159,6 +157,20 @@ class DoubleDragon:
             else:
                 ids = ids[0]
                 con.execute(f'''DELETE FROM '{name}' WHERE id in ({ids})''')
+
+    def del_table_content_by_ids_concat(self, name: str, ids: list) -> str:
+        """
+        return string of text with delete statement. required name of table and list of ids
+
+        :param name: table name as string, as example 'Goods'
+        :param ids: list of id, as example [1, 2, 3] or [4]
+        """
+        if len(ids) > 1:
+            ids = tuple(ids)
+            return f''' DELETE FROM '{name}' WHERE id in {ids}; '''
+        else:
+            ids = ids[0]
+            return f''' DELETE FROM '{name}' WHERE id in ({ids}); '''
 
     def insert(self, name: str, values: tuple):
         """
@@ -171,6 +183,19 @@ class DoubleDragon:
             result = con.execute(f'''select * from pragma_table_info('{name}')''').fetchall()
             listy = tuple([i[1] for i in result if i[1] != 'id'])
             con.execute(f'''insert into '{name}' {listy} values {values}''')
+
+    def insert_concat(self, name: str, values: tuple) -> str:
+        """
+        return string with insert values into table statement. required name of table and tuple of values.
+        id is not required
+
+        :param name: table name as string, as example 'Goods'
+        :param values: tuple of values i.e. ('Книга', 350.0, 1, 1234, 0.5, 'Book_1.json', 1, 0, '2024-06-30', 50, 20, 0))
+        """
+        with self.con as con:
+            result = con.execute(f'''select * from pragma_table_info('{name}')''').fetchall()
+            listy = tuple([i[1] for i in result if i[1] != 'id'])
+            return f''' insert into '{name}' {listy} values {values}; '''
 
     def insert_docs(self, doc_type=None, prefix=None, number=None, sender=None, receiver=None,
                     date=None, driver=None, pass_issued=None, pass_expired=None, proxy=None, contract_num=None):
