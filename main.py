@@ -31,7 +31,7 @@ class Ui_MainWindow(object):
         self.tableWidget_2.setGeometry(QtCore.QRect(60, 120, 661, 301))
         self.tableWidget_2.setObjectName("tableWidget_2")
         self.tableWidget_2.setRowCount(0)
-        self.gen_table()
+        self.gen_table(self.tableWidget_2)
         self.pushButton_3 = QtWidgets.QPushButton(self.items)
         self.pushButton_3.setGeometry(QtCore.QRect(340, 460, 181, 31))
         self.pushButton_3.setObjectName("pushButton_3")
@@ -67,6 +67,7 @@ class Ui_MainWindow(object):
         self.tableWidget_3.setObjectName("tableWidget_3")
         self.tableWidget_3.setColumnCount(0)
         self.tableWidget_3.setRowCount(0)
+        self.gen_table(self.tableWidget_3, name = 'Depots')
         self.pushButton_8 = QtWidgets.QPushButton(self.storages)
         self.pushButton_8.setGeometry(QtCore.QRect(540, 460, 181, 31))
         self.pushButton_8.setObjectName("pushButton_8")
@@ -99,6 +100,7 @@ class Ui_MainWindow(object):
         self.tableWidget_6.setObjectName("tableWidget_6")
         self.tableWidget_6.setColumnCount(0)
         self.tableWidget_6.setRowCount(0)
+        self.gen_table(widget=self.tableWidget_6, name='Contractors', type='Покупатель')
         self.label_6 = QtWidgets.QLabel(self.clients)
         self.label_6.setGeometry(QtCore.QRect(70, 30, 161, 61))
         font = QtGui.QFont()
@@ -125,6 +127,7 @@ class Ui_MainWindow(object):
         self.tableWidget_7.setObjectName("tableWidget_7")
         self.tableWidget_7.setColumnCount(0)
         self.tableWidget_7.setRowCount(0)
+        self.gen_table(widget=self.tableWidget_7, name='Contractors', type='Поставщик')
         self.pushButton_21 = QtWidgets.QPushButton(self.suppliers)
         self.pushButton_21.setGeometry(QtCore.QRect(540, 460, 181, 31))
         self.pushButton_21.setObjectName("pushButton_21")
@@ -151,6 +154,7 @@ class Ui_MainWindow(object):
         self.tableWidget_8.setObjectName("tableWidget_8")
         self.tableWidget_8.setColumnCount(0)
         self.tableWidget_8.setRowCount(0)
+        self.gen_table(widget=self.tableWidget_8, name='Contractors', type='Подрядчик')
         self.pushButton_25 = QtWidgets.QPushButton(self.contractors)
         self.pushButton_25.setGeometry(QtCore.QRect(540, 460, 181, 31))
         self.pushButton_25.setObjectName("pushButton_25")
@@ -169,6 +173,7 @@ class Ui_MainWindow(object):
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
+        self.gen_table(widget=self.tableWidget)
         self.label = QtWidgets.QLabel(self.create_order)
         self.label.setGeometry(QtCore.QRect(540, 40, 181, 21))
         self.label.setObjectName("label")
@@ -238,23 +243,39 @@ class Ui_MainWindow(object):
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        self.pushButton.clicked.connect(self.gen_table)
+    def gen_table(self, widget, name = 'Goods', type = None):
+        table_colums = db.get_rus_columns(name)
+        if name == 'Goods':
+            table_colums[3], table_colums[7] = 'название категории', 'название склада'
+            table_items = db.get_fancy_goods(with_id=True) # добавил функию конкретно для Goods с заменой id других таблиц на другие данные, функция выше для получения дефолтных данных
+        else:
+            table_items = db.get_table_by_name(name, with_id=True)
+        print(table_items)
 
+        if type:
+            temp = []
+            for p in table_items:
+                if p[-1] == type:
+                    temp.append(p)
+            table_items = temp
 
-    def gen_table(self):
-        table_colums = db.get_rus_columns('Goods')[1:] # сам просил id первым, поэтому с 1 индекса а не 0
-        table_colums[3], table_colums[7] = 'название категории', 'название склада' # смена с названий с id на более приемлимые - думаю проще в коде сделать чем ломать функциями
-        #table_items = db.get_table_by_name('Goods') # по дефолту будет возвращать без id; словарь переводов названий таблиц можно достать при помощи db.table_names_dicty -> {eng:rus ...
-        table_items = db.get_fancy_goods() # добавил функию конкретно для Goods с заменой id других таблиц на другие данные, функция выше для получения дефолтных данных
-        print(len(table_items))
-        self.tableWidget_2.setColumnCount(len(table_colums))
-        self.tableWidget_2.setHorizontalHeaderLabels(table_colums)
-        self.tableWidget_2.horizontalHeader().setDefaultSectionSize(150)
-        self.tableWidget_2.setRowCount(len(table_items))
+        widget.setColumnCount(len(table_colums))
+        widget.setHorizontalHeaderLabels(table_colums)
+        widget.horizontalHeader().setDefaultSectionSize(150)
+        widget.setRowCount(len(table_items))
 
-        for row in range(self.tableWidget_2.rowCount()):
-            for col in range(self.tableWidget_2.columnCount()):
-                self.tableWidget_2.setItem(row, col, QtWidgets.QTableWidgetItem(str(table_items[row][col])))
+        for row in range(widget.rowCount()):
+            for col in range(widget.columnCount()):
+                widget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+                widget.setItem(row, col, QtWidgets.QTableWidgetItem(str(table_items[row][col])))
+
+        if widget.objectName() == 'tableWidget':
+            widget.insertColumn(widget.columnCount())
+            widget.setHorizontalHeaderItem(widget.columnCount()-1, QtWidgets.QTableWidgetItem('Кол-во для заказа'))
+            
+            for row in range(widget.rowCount()):
+                widget.setItem(row, widget.columnCount()-1, QtWidgets.QTableWidgetItem('0'))
+        widget.setColumnHidden(0, True)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
