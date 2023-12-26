@@ -2,6 +2,7 @@ from docxtpl import DocxTemplate
 from openpyxl import Workbook
 from openpyxl import load_workbook
 from docx import Document
+from db_requests import db
 
 def edi_export(doctype='sell', date='', number="",
                reciever='', sender='', contract_num='', driver='', proxy='',
@@ -158,20 +159,29 @@ def edi_export(doctype='sell', date='', number="",
 
 
 def edi_import(path: str):
-    document = Document(path)
-    par = document.paragraphs
-    doc_name = par[0].text.split('№')[0].strip()
-    if 'Паспорт' in doc_name:
-        exp_date = par[2].text.split(':')[1],
-        pass_num = par[0].text.split('№')[1].strip(),
-        pass_date = par[3].text.split(':')[1],
-        pass_exp_date = par[4].text.split(':')[1],
-        properties = {}
-        for i in par[5].text.split('\n')[1:-1]:
-            properties[i.split(':')[0]] = i.split(':')[1]
-        print(exp_date + pass_num + pass_date + pass_exp_date)
-        print('dict')
-        print(properties) # Z-z-z
+    if 'docx' in path:
+        document = Document(path)
+        par = document.paragraphs
+        doc_name = par[0].text.split('№')[0].strip()
+        if 'Паспорт' in doc_name:
+            exp_date = par[2].text.split(':')[1],
+            pass_num = par[0].text.split('№')[1].strip(),
+            pass_date = par[3].text.split(':')[1],
+            pass_exp_date = par[4].text.split(':')[1],
+            properties = {}
+            for i in par[5].text.split('\n')[1:-1]:
+                properties[i.split(':')[0]] = i.split(':')[1]
+            return 'pass', pass_num[0], pass_date[0], pass_exp_date[0], exp_date[0], properties
+
+    elif 'xlsx' in path:
+        wb = load_workbook(filename=path)
+        ws = wb.active
+        goods_list = []
+        for row in ws.iter_rows(min_row=5, max_col=5, max_row=100):
+            a = [i.value for i in row]
+            if any(a):
+                goods_list.append(a)
+        return goods_list
     pass
     # doctype = 'sell',
     # date = '',
@@ -197,16 +207,16 @@ def edi_import(path: str):
 #                                      'mass': 'very heavy'
 #                                      }})
 #
-# edi_export(doctype='passport',
-#            pass_num=1707,
-#            date='12.13.2023',
-#            pass_date='11.13.2023',
-#            pass_exp_date='не ограничен',
-#            goods={'готовый проект': {'душность': 100,
-#                                      'стабильность': 0.1,
-#                                      'масса': 'very heavy',
-#                                      'exp_date': 'не ограничен'
-#                                      }})
+edi_export(doctype='pass',
+           pass_num=1707,
+           date='12.13.2023',
+           pass_date='11.13.2023',
+           pass_exp_date='не ограничен',
+           goods={'готовый проект': {'душность': 100,
+                                     'стабильность': 0.1,
+                                     'масса': 'very heavy',
+                                     'exp_date': 'не ограничен'
+                                     }})
 #
 #
 # edi_export(number='1',
@@ -228,10 +238,13 @@ def edi_import(path: str):
 #            date='12.12.2023',
 #            reciever='Бабушка',
 #            sender='ООО АЮК',
-#            goods={'готовый проект': {'amount': 1,
-#                                      'price': 1000,
-#                                      'mass': '28 тысяч коммитов! ты дейстовал наверняка'
-#                                  }})
+#            goods={'готовый проект': {'price': 1000,
+#                                      'vendor_code': 'R-123',
+#                                      'mass': '28 тысяч коммитов! ты дейстовал наверняка',
+#                                      'amount': 1
+#                                      }
+#                   }
+#            )
 #
 # edi_export(number='1',
 #            doctype='write-off',
@@ -279,4 +292,19 @@ def edi_import(path: str):
 #            pass_exp_date='10.10.2043',
 #            goods={'project': project})
 
-edi_import('EDI/pass_1_14.12.2023.docx')
+# good_list = edi_import('EDI/move_out_1_12.12.2023.xlsx')
+# print(good_list)
+# for good in good_list:
+#     db.insert('Goods', (good[0], good[1], '', good[2], good[3], '', '', 0, '', good[4], '', ''))
+# print(db.get_table_by_name('Goods'))
+
+pass_list = edi_import(r'EDI/pass__12.13.2023.docx')
+print(pass_list)
+db.insert_docs(doc_type=pass_list[0],
+               prefix='ПА',
+               number=pass_list[1],
+               date='26.12.2023',
+               pass_issued=pass_list[2],
+               pass_expired=pass_list[3],
+               )
+print(db.get_table_by_name('Docs', with_id=True))

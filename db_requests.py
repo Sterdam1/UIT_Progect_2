@@ -197,13 +197,14 @@ class DoubleDragon:
             listy = tuple([i[1] for i in result if i[1] != 'id'])
             return f''' insert into '{name}' {listy} values {values}; '''
 
-    def insert_docs(self, doc_type=None, prefix=None, number=None, sender=None, receiver=None,
-                    date=None, driver=None, pass_issued=None, pass_expired=None, proxy=None, contract_num=None):
+    def insert_docs(self, doc_type='', prefix='', number='', sender='', receiver='',
+                    date='', driver='', pass_issued='', pass_expired='', proxy='', contract_num=''):
         """
         pretty much work in progress
         maybe good enough?
         all of the parameters in oder of appearance in DB
         """
+
         with self.con as con:
             con.execute(f'''insert into Docs (doc_type, prefix, number, sender, receiver, 
             date, driver, pass_issued, pass_expired, proxy, contract_num) values {doc_type, prefix, number, sender,
