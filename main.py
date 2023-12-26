@@ -258,7 +258,15 @@ class Ui_MainWindow(object):
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+
     def fill_comboBox(self, widget, name='Depots', id = 0):
+        """
+        filling comboBoxes with database content
+
+        :param widget: comboBox to fill
+        :param name: table form which cobmoBox will be filled
+        :param id: index of tuple that is going to be an item in comboBox
+        """
         items = db.get_table_by_name(name)
         if name == 'Contractors':
             widget.addItems([i[id] for i in items if i[-1] == 'Покупатель'])
@@ -266,6 +274,13 @@ class Ui_MainWindow(object):
             widget.addItems([i[id] for i in items])
 
     def gen_table(self, widget, name = 'Goods', type = None):
+        """
+        Generating table with database content
+        
+        :param widget: tableWidget to generate
+        :param name: table form which tableWidget will be generated
+        :param type: special variable to generate tables with cobmoBoxes singals, can we list ['Depots', 'name of depot'] or string 'Подрядчик'
+        """
         table_colums = db.get_rus_columns(name)
         if name == 'Goods':
             table_colums[3], table_colums[7] = 'название категории', 'название склада'
