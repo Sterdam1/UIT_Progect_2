@@ -182,6 +182,11 @@ class Ui_MainWindow(object):
         self.comboBox = QtWidgets.QComboBox(self.create_order)
         self.comboBox.setGeometry(QtCore.QRect(540, 70, 181, 31))
         self.comboBox.setObjectName("comboBox")
+        self.comboBox.setEditable(True)
+        self.comboBox.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
+        self.comboBox.completer().setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+        self.comboBox.setPlaceholderText('Выбрать клиента')
+        self.fill_comboBox(self.comboBox, name='Contractors', id=1)
         self.label_9 = QtWidgets.QLabel(self.create_order)
         self.label_9.setGeometry(QtCore.QRect(60, 30, 281, 61))
         font = QtGui.QFont()
@@ -208,6 +213,7 @@ class Ui_MainWindow(object):
         self.tableWidget_4.setObjectName("tableWidget_4")
         self.tableWidget_4.setColumnCount(0)
         self.tableWidget_4.setRowCount(0)
+        self.gen_table(self.tableWidget_4, 'Oder')
         self.pushButton_12 = QtWidgets.QPushButton(self.order_list)
         self.pushButton_12.setGeometry(QtCore.QRect(570, 440, 151, 31))
         self.pushButton_12.setObjectName("pushButton_12")
@@ -252,11 +258,12 @@ class Ui_MainWindow(object):
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-
-
     def fill_comboBox(self, widget, name='Depots', id = 0):
         items = db.get_table_by_name(name)
-        widget.addItems([i[id] for i in items])
+        if name == 'Contractors':
+            widget.addItems([i[id] for i in items if i[-1] == 'Покупатель'])
+        else:
+            widget.addItems([i[id] for i in items])
 
     def gen_table(self, widget, name = 'Goods', type = None):
         table_colums = db.get_rus_columns(name)
@@ -265,20 +272,15 @@ class Ui_MainWindow(object):
             table_items = self.table_items 
         else:
             table_items = db.get_table_by_name(name, with_id=True)
-        print(table_items)
+        # print(table_items)
 
         temp = []
-        if type and len(type)>2:
-            for p in table_items:
-                if p[-1] == type:
-                    temp.append(p)
+        if type:
+            if len(type)>2:
+                temp = [p for p in table_items if p[-1] == type]
+            elif type[0] == 'Depots':
+                temp = [d for d in table_items if d[7] == type[1].currentText()] 
             table_items = temp
-        elif type and type[0] == 'Depots':
-            for d in table_items:
-                if d[7] == type[1].currentText():
-                    temp.append(d) 
-            table_items = temp
-
 
         widget.setColumnCount(len(table_colums))
         widget.setHorizontalHeaderLabels(table_colums)
