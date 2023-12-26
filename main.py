@@ -10,9 +10,11 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from db_requests import db
+from functools import partial
 
 class Ui_MainWindow(object):
     def setupMainWindow(self, MainWindow):
+        self.table_items = db.get_fancy_goods(with_id=True)
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(810, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -232,6 +234,13 @@ class Ui_MainWindow(object):
         self.comboBox_2 = QtWidgets.QComboBox(self.remains)
         self.comboBox_2.setGeometry(QtCore.QRect(210, 50, 181, 31))
         self.comboBox_2.setObjectName("comboBox_2")
+        self.comboBox_2.setPlaceholderText('Выбрать склад')
+        self.comboBox_2.setEditable(True)
+        self.comboBox_2.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
+        self.comboBox_2.completer().setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+        self.fill_comboBox(self.comboBox_2)
+        self.comboBox_2.currentIndexChanged.connect(partial(self.gen_table, self.tableWidget_5, 'Goods', ['Depots',self.comboBox_2]))
+
         self.tabWidget.addTab(self.remains, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -243,21 +252,33 @@ class Ui_MainWindow(object):
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+
+
+    def fill_comboBox(self, widget, name='Depots', id = 0):
+        items = db.get_table_by_name(name)
+        widget.addItems([i[id] for i in items])
+
     def gen_table(self, widget, name = 'Goods', type = None):
         table_colums = db.get_rus_columns(name)
         if name == 'Goods':
             table_colums[3], table_colums[7] = 'название категории', 'название склада'
-            table_items = db.get_fancy_goods(with_id=True) # добавил функию конкретно для Goods с заменой id других таблиц на другие данные, функция выше для получения дефолтных данных
+            table_items = self.table_items 
         else:
             table_items = db.get_table_by_name(name, with_id=True)
         print(table_items)
 
-        if type:
-            temp = []
+        temp = []
+        if type and len(type)>2:
             for p in table_items:
                 if p[-1] == type:
                     temp.append(p)
             table_items = temp
+        elif type and type[0] == 'Depots':
+            for d in table_items:
+                if d[7] == type[1].currentText():
+                    temp.append(d) 
+            table_items = temp
+
 
         widget.setColumnCount(len(table_colums))
         widget.setHorizontalHeaderLabels(table_colums)
