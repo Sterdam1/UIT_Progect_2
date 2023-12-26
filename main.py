@@ -253,18 +253,27 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-        self.pushButton_9.clicked.connect(self.add_row)
+        self.pushButton_9.clicked.connect(partial(self.add_row, self.tableWidget_3))
+        self.pushButton_18.clicked.connect(partial(self.add_row, self.tableWidget_6))
+        self.pushButton_22.clicked.connect(partial(self.add_row, self.tableWidget_7))
+        self.pushButton_26.clicked.connect(partial(self.add_row, self.tableWidget_8))
+        self.pushButton_4.clicked.connect(partial(self.add_row, self.tableWidget_2))
+
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(3)
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def add_row(self):
-        print(self.tableWidget_3.item(self.tableWidget_3.rowCount()-1, 0).text())
-        self.tableWidget_3.insertRow(self.tableWidget_3.rowCount())
-        self.tableWidget_3.setItem(self.tableWidget_3.rowCount()-1, 0, QtWidgets.QTableWidgetItem(f'{int(self.tableWidget_3.item(self.tableWidget_3.rowCount()-2, 0).text())+1}'))
+    def add_row(self, widget):
+        widget.insertRow(widget.rowCount())
+        if widget.rowCount() < 2:
+            item = QtWidgets.QTableWidgetItem('1')
+        else:
+            item = QtWidgets.QTableWidgetItem(f'{int(widget.item(widget.rowCount()-2, 0).text())+1}')
+        widget.setItem(widget.rowCount()-1, 0, QtWidgets.QTableWidgetItem(item))
         
+
     def fill_comboBox(self, widget, name='Depots', id = 0):
         """
         filling comboBoxes with database content
