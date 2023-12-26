@@ -253,25 +253,50 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-        self.pushButton_9.clicked.connect(partial(self.add_row, self.tableWidget_3))
-        self.pushButton_18.clicked.connect(partial(self.add_row, self.tableWidget_6))
-        self.pushButton_22.clicked.connect(partial(self.add_row, self.tableWidget_7))
-        self.pushButton_26.clicked.connect(partial(self.add_row, self.tableWidget_8))
-        self.pushButton_4.clicked.connect(partial(self.add_row, self.tableWidget_2))
+        # add row buttons, last param takes a list or buttons we need to disable
+        self.pushButton_4.clicked.connect(partial(self.add_row, self.tableWidget_2, [self.pushButton_5, self.pushButton_4]))
+        self.pushButton_9.clicked.connect(partial(self.add_row, self.tableWidget_3, [self.pushButton_9, self.pushButton_6]))
+        self.pushButton_18.clicked.connect(partial(self.add_row, self.tableWidget_6, [self.pushButton_18, self.pushButton_15]))
+        self.pushButton_22.clicked.connect(partial(self.add_row, self.tableWidget_7, [self.pushButton_22, self.pushButton_19]))
+        self.pushButton_26.clicked.connect(partial(self.add_row, self.tableWidget_8, [self.pushButton_26, self.pushButton_23]))
+        
+        # del row buttons, last param takes a list or buttons we need to disable
+        self.pushButton_5.clicked.connect(partial(self.del_row, self.tableWidget_2, [self.pushButton_5, self.pushButton_4]))
+        self.pushButton_6.clicked.connect(partial(self.del_row, self.tableWidget_3, [self.pushButton_9, self.pushButton_6]))
+        self.pushButton_15.clicked.connect(partial(self.del_row, self.tableWidget_6, [self.pushButton_18, self.pushButton_15]))
+        self.pushButton_19.clicked.connect(partial(self.del_row, self.tableWidget_7, [self.pushButton_22, self.pushButton_19]))
+        self.pushButton_23.clicked.connect(partial(self.del_row, self.tableWidget_8,  [self.pushButton_26, self.pushButton_23]))
 
+        # save buttons, last param takes a list or buttons we need to enable
+        self.pushButton_4.clicked.connect(partial(self.save_table, [self.pushButton_5, self.pushButton_4]))
+        self.pushButton_7.clicked.connect(partial(self.save_table, [self.pushButton_9, self.pushButton_6]))
+        self.pushButton_16.clicked.connect(partial(self.save_table, [self.pushButton_18, self.pushButton_15]))
+        self.pushButton_20.clicked.connect(partial(self.save_table,  [self.pushButton_22, self.pushButton_19]))
+        self.pushButton_24.clicked.connect(partial(self.save_table, [self.pushButton_26, self.pushButton_23]))
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(3)
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def add_row(self, widget):
+    def add_row(self, widget, buttons):
         widget.insertRow(widget.rowCount())
         if widget.rowCount() < 2:
             item = QtWidgets.QTableWidgetItem('1')
         else:
             item = QtWidgets.QTableWidgetItem(f'{int(widget.item(widget.rowCount()-2, 0).text())+1}')
         widget.setItem(widget.rowCount()-1, 0, QtWidgets.QTableWidgetItem(item))
+        for b in buttons:
+            b.setEnabled(False)
+    
+    def del_row(self, widget, buttons):
+        widget.removeRow(widget.currentRow())
+        for b in buttons:
+            b.setEnabled(False)
+        
+    def save_table(self, buttons, widget=None):
+        for b in buttons:
+            b.setEnabled(True) 
         
 
     def fill_comboBox(self, widget, name='Depots', id = 0):
