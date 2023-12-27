@@ -298,13 +298,13 @@ edi_export(doctype='pass',
 #     db.insert('Goods', (good[0], good[1], '', good[2], good[3], '', '', 0, '', good[4], '', ''))
 # print(db.get_table_by_name('Goods'))
 
-pass_list = edi_import(r'EDI/pass__12.13.2023.docx')
-print(pass_list)
-db.insert_docs(doc_type=pass_list[0],
-               prefix='ПА',
-               number=pass_list[1],
-               date='26.12.2023',
-               pass_issued=pass_list[2],
-               pass_expired=pass_list[3],
-               )
-print(db.get_table_by_name('Docs', with_id=True))
+# pass_list = edi_import(r'EDI/pass__12.13.2023.docx')
+# print(pass_list)
+# db.insert_docs(doc_type=pass_list[0],  # можно в словарь обернуть тут и в бэке позже
+#                prefix='ПА',
+#                number=pass_list[1],
+#                date='26.12.2023',
+#                pass_issued=pass_list[2],
+#                pass_expired=pass_list[3],
+#                )
+# print(db.get_table_by_name('Docs', with_id=True))

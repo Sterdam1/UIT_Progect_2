@@ -16,11 +16,11 @@ class Ui_MainWindow(object):
     def setupMainWindow(self, MainWindow):
         self.table_items = db.get_fancy_goods(with_id=True)
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(810, 600)
+        MainWindow.resize(864, 651)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 811, 600))
+        self.tabWidget.setGeometry(QtCore.QRect(0, 0, 861, 651))
         self.tabWidget.setUsesScrollButtons(False)
         self.tabWidget.setTabBarAutoHide(True)
         self.tabWidget.setObjectName("tabWidget")
@@ -80,7 +80,7 @@ class Ui_MainWindow(object):
         self.people = QtWidgets.QWidget()
         self.people.setObjectName("people")
         self.tabWidget_2 = QtWidgets.QTabWidget(self.people)
-        self.tabWidget_2.setGeometry(QtCore.QRect(0, -4, 811, 551))
+        self.tabWidget_2.setGeometry(QtCore.QRect(0, -4, 864, 651))
         self.tabWidget_2.setMovable(False)
         self.tabWidget_2.setObjectName("tabWidget_2")
         self.clients = QtWidgets.QWidget()
@@ -237,6 +237,22 @@ class Ui_MainWindow(object):
         self.tableWidget_5.setObjectName("tableWidget_5")
         self.tableWidget_5.setColumnCount(0)
         self.tableWidget_5.setRowCount(0)
+
+        self.textEdit = QtWidgets.QTextEdit(self.create_order)
+        self.textEdit.setGeometry(QtCore.QRect(130, 500, 221, 41))
+        self.textEdit.setObjectName("textEdit")
+        self.lineEdit = QtWidgets.QLineEdit(self.create_order)
+        self.lineEdit.setGeometry(QtCore.QRect(130, 470, 181, 20))
+        self.lineEdit.setObjectName("lineEdit")
+        self.textEdit_2 = QtWidgets.QTextEdit(self.create_order)
+        self.textEdit_2.setGeometry(QtCore.QRect(130, 550, 221, 51))
+        self.textEdit_2.setObjectName("textEdit_2")
+        self.label_10 = QtWidgets.QLabel(self.create_order)
+        self.label_10.setGeometry(QtCore.QRect(60, 470, 47, 13))
+        self.label_10.setObjectName("label_10")
+        self.label_11 = QtWidgets.QLabel(self.create_order)
+        self.label_11.setGeometry(QtCore.QRect(60, 510, 47, 13))
+        self.label_11.setObjectName("label_11")
         self.comboBox_2 = QtWidgets.QComboBox(self.remains)
         self.comboBox_2.setGeometry(QtCore.QRect(210, 50, 181, 31))
         self.comboBox_2.setObjectName("comboBox_2")
@@ -246,12 +262,25 @@ class Ui_MainWindow(object):
         self.comboBox_2.completer().setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
         self.fill_comboBox(self.comboBox_2)
         self.comboBox_2.currentIndexChanged.connect(partial(self.gen_table, self.tableWidget_5, 'Goods', ['Depots',self.comboBox_2]))
-
+        self.comboBox_3 = QtWidgets.QComboBox(self.create_order)
+        self.comboBox_3.setGeometry(QtCore.QRect(60, 80, 181, 31))
+        self.comboBox_3.setObjectName("comboBox_3")
+        self.comboBox_3.setPlaceholderText('Выбрать склад')
+        self.comboBox_3.setEditable(True)
+        self.comboBox_3.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
+        self.comboBox_3.completer().setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+        self.comboBox_3.currentIndexChanged.connect(
+            partial(self.gen_table, self.tableWidget, 'Goods', ['Depots', self.comboBox_3]))
+        self.fill_comboBox(self.comboBox_3)
         self.tabWidget.addTab(self.remains, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
+        self.label_12 = QtWidgets.QLabel(self.create_order)
+        self.label_12.setGeometry(QtCore.QRect(60, 560, 71, 16))
+        self.label_12.setObjectName("label_12")
+
 
         # add row buttons, last param takes a list or buttons we need to disable
         self.pushButton_4.clicked.connect(partial(self.add_row, self.tableWidget_2, [self.pushButton_5, self.pushButton_4]))
@@ -312,6 +341,8 @@ class Ui_MainWindow(object):
             widget.addItems([i[id] for i in items if i[-1] == 'Покупатель'])
         else:
             widget.addItems([i[id] for i in items])
+        if name == 'Depots':
+            widget.addItem('Все')
 
     def gen_table(self, widget, name = 'Goods', type = None):
         """
@@ -333,8 +364,10 @@ class Ui_MainWindow(object):
         if type:
             if len(type)>2:
                 temp = [p for p in table_items if p[-1] == type]
+            elif type[0] == 'Depots' and type[1].currentText() == 'Все':
+                temp = [d for d in table_items]
             elif type[0] == 'Depots':
-                temp = [d for d in table_items if d[7] == type[1].currentText()] 
+                temp = [d for d in table_items if d[7] == type[1].currentText()]
             table_items = temp
 
         widget.setColumnCount(len(table_colums))
@@ -358,6 +391,9 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.label_10.setText(_translate("MainWindow", "Телефон"))
+        self.label_11.setText(_translate("MainWindow", "Адрес"))
+        self.label_12.setText(_translate("MainWindow", "Комментарий"))
         self.pushButton_2.setText(_translate("MainWindow", "Отменить"))
         self.pushButton_3.setText(_translate("MainWindow", "Сохранить"))
         self.pushButton_4.setText(_translate("MainWindow", "Добавить"))
