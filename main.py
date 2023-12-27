@@ -15,6 +15,7 @@ from functools import partial
 class Ui_MainWindow(object):
     def setupMainWindow(self, MainWindow):
         self.table_items = db.get_fancy_goods(with_id=True)
+        self.last_action = {}
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(864, 651)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -37,6 +38,7 @@ class Ui_MainWindow(object):
         self.pushButton_3 = QtWidgets.QPushButton(self.items)
         self.pushButton_3.setGeometry(QtCore.QRect(340, 460, 181, 31))
         self.pushButton_3.setObjectName("pushButton_3")
+        self.pushButton_3.setEnabled(False)
         self.pushButton_4 = QtWidgets.QPushButton(self.items)
         self.pushButton_4.setGeometry(QtCore.QRect(340, 50, 181, 31))
         self.pushButton_4.setObjectName("pushButton_4")
@@ -64,6 +66,7 @@ class Ui_MainWindow(object):
         self.pushButton_7 = QtWidgets.QPushButton(self.storages)
         self.pushButton_7.setGeometry(QtCore.QRect(340, 460, 181, 31))
         self.pushButton_7.setObjectName("pushButton_7")
+        self.pushButton_7.setEnabled(False)
         self.tableWidget_3 = QtWidgets.QTableWidget(self.storages)
         self.tableWidget_3.setGeometry(QtCore.QRect(60, 120, 661, 301))
         self.tableWidget_3.setObjectName("tableWidget_3")
@@ -97,6 +100,7 @@ class Ui_MainWindow(object):
         self.pushButton_16 = QtWidgets.QPushButton(self.clients)
         self.pushButton_16.setGeometry(QtCore.QRect(340, 460, 181, 31))
         self.pushButton_16.setObjectName("pushButton_16")
+        self.pushButton_16.setEnabled(False)
         self.tableWidget_6 = QtWidgets.QTableWidget(self.clients)
         self.tableWidget_6.setGeometry(QtCore.QRect(60, 120, 661, 301))
         self.tableWidget_6.setObjectName("tableWidget_6")
@@ -124,6 +128,7 @@ class Ui_MainWindow(object):
         self.pushButton_20 = QtWidgets.QPushButton(self.suppliers)
         self.pushButton_20.setGeometry(QtCore.QRect(340, 460, 181, 31))
         self.pushButton_20.setObjectName("pushButton_20")
+        self.pushButton_20.setEnabled(False)
         self.tableWidget_7 = QtWidgets.QTableWidget(self.suppliers)
         self.tableWidget_7.setGeometry(QtCore.QRect(60, 120, 661, 301))
         self.tableWidget_7.setObjectName("tableWidget_7")
@@ -151,6 +156,7 @@ class Ui_MainWindow(object):
         self.pushButton_24 = QtWidgets.QPushButton(self.contractors)
         self.pushButton_24.setGeometry(QtCore.QRect(340, 460, 181, 31))
         self.pushButton_24.setObjectName("pushButton_24")
+        self.pushButton_24.setEnabled(False)
         self.tableWidget_8 = QtWidgets.QTableWidget(self.contractors)
         self.tableWidget_8.setGeometry(QtCore.QRect(60, 120, 661, 301))
         self.tableWidget_8.setObjectName("tableWidget_8")
@@ -283,25 +289,32 @@ class Ui_MainWindow(object):
 
 
         # add row buttons, last param takes a list or buttons we need to disable
-        self.pushButton_4.clicked.connect(partial(self.add_row, self.tableWidget_2, [self.pushButton_5, self.pushButton_4]))
-        self.pushButton_9.clicked.connect(partial(self.add_row, self.tableWidget_3, [self.pushButton_9, self.pushButton_6]))
-        self.pushButton_18.clicked.connect(partial(self.add_row, self.tableWidget_6, [self.pushButton_18, self.pushButton_15]))
-        self.pushButton_22.clicked.connect(partial(self.add_row, self.tableWidget_7, [self.pushButton_22, self.pushButton_19]))
-        self.pushButton_26.clicked.connect(partial(self.add_row, self.tableWidget_8, [self.pushButton_26, self.pushButton_23]))
+        self.pushButton_4.clicked.connect(partial(self.add_row, self.tableWidget_2, [self.pushButton_3, self.pushButton_5, self.pushButton_4]))
+        self.pushButton_9.clicked.connect(partial(self.add_row, self.tableWidget_3, [self.pushButton_7, self.pushButton_9, self.pushButton_6]))
+        self.pushButton_18.clicked.connect(partial(self.add_row, self.tableWidget_6, [self.pushButton_16, self.pushButton_18, self.pushButton_15]))
+        self.pushButton_22.clicked.connect(partial(self.add_row, self.tableWidget_7, [self.pushButton_20, self.pushButton_22, self.pushButton_19]))
+        self.pushButton_26.clicked.connect(partial(self.add_row, self.tableWidget_8, [self.pushButton_24, self.pushButton_26, self.pushButton_23]))
         
         # del row buttons, last param takes a list or buttons we need to disable
-        self.pushButton_5.clicked.connect(partial(self.del_row, self.tableWidget_2, [self.pushButton_5, self.pushButton_4]))
-        self.pushButton_6.clicked.connect(partial(self.del_row, self.tableWidget_3, [self.pushButton_9, self.pushButton_6]))
-        self.pushButton_15.clicked.connect(partial(self.del_row, self.tableWidget_6, [self.pushButton_18, self.pushButton_15]))
-        self.pushButton_19.clicked.connect(partial(self.del_row, self.tableWidget_7, [self.pushButton_22, self.pushButton_19]))
-        self.pushButton_23.clicked.connect(partial(self.del_row, self.tableWidget_8,  [self.pushButton_26, self.pushButton_23]))
+        self.pushButton_5.clicked.connect(partial(self.del_row, self.tableWidget_2, [self.pushButton_3, self.pushButton_5, self.pushButton_4]))
+        self.pushButton_6.clicked.connect(partial(self.del_row, self.tableWidget_3, [self.pushButton_7, self.pushButton_9, self.pushButton_6]))
+        self.pushButton_15.clicked.connect(partial(self.del_row, self.tableWidget_6, [self.pushButton_16, self.pushButton_18, self.pushButton_15]))
+        self.pushButton_19.clicked.connect(partial(self.del_row, self.tableWidget_7, [self.pushButton_20, self.pushButton_22, self.pushButton_19]))
+        self.pushButton_23.clicked.connect(partial(self.del_row, self.tableWidget_8,  [self.pushButton_24, self.pushButton_26, self.pushButton_23]))
 
         # save buttons, last param takes a list or buttons we need to enable
-        self.pushButton_4.clicked.connect(partial(self.save_table, [self.pushButton_5, self.pushButton_4]))
-        self.pushButton_7.clicked.connect(partial(self.save_table, [self.pushButton_9, self.pushButton_6]))
-        self.pushButton_16.clicked.connect(partial(self.save_table, [self.pushButton_18, self.pushButton_15]))
-        self.pushButton_20.clicked.connect(partial(self.save_table,  [self.pushButton_22, self.pushButton_19]))
-        self.pushButton_24.clicked.connect(partial(self.save_table, [self.pushButton_26, self.pushButton_23]))
+        self.pushButton_3.clicked.connect(partial(self.save_table, [self.pushButton_3, self.pushButton_5, self.pushButton_4]))
+        self.pushButton_7.clicked.connect(partial(self.save_table, [self.pushButton_7, self.pushButton_9, self.pushButton_6]))
+        self.pushButton_16.clicked.connect(partial(self.save_table, [self.pushButton_16, self.pushButton_18, self.pushButton_15]))
+        self.pushButton_20.clicked.connect(partial(self.save_table,  [self.pushButton_20, self.pushButton_22, self.pushButton_19]))
+        self.pushButton_24.clicked.connect(partial(self.save_table, [self.pushButton_24, self.pushButton_26, self.pushButton_23]))
+
+        # cansel buttons
+        self.pushButton_2.clicked.connect(partial(self.cancel_action, self.tableWidget_2, [self.pushButton_3, self.pushButton_5, self.pushButton_4]))
+        self.pushButton_8.clicked.connect(partial(self.cancel_action, self.tableWidget_3, [self.pushButton_7, self.pushButton_9, self.pushButton_6]))
+        self.pushButton_17.clicked.connect(partial(self.cancel_action, self.tableWidget_6, [self.pushButton_16, self.pushButton_18, self.pushButton_15]))
+        self.pushButton_21.clicked.connect(partial(self.cancel_action, self.tableWidget_7, [self.pushButton_20, self.pushButton_22, self.pushButton_19]))
+        self.pushButton_25.clicked.connect(partial(self.cancel_action, self.tableWidget_8, [self.pushButton_24, self.pushButton_26, self.pushButton_23]))
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(3)
@@ -315,18 +328,42 @@ class Ui_MainWindow(object):
         else:
             item = QtWidgets.QTableWidgetItem(f'{int(widget.item(widget.rowCount()-2, 0).text())+1}')
         widget.setItem(widget.rowCount()-1, 0, QtWidgets.QTableWidgetItem(item))
-        for b in buttons:
+        for b in buttons[1:]:
             b.setEnabled(False)
+        buttons[0].setEnabled(True)
+        self.last_action = {'add_row': widget.rowCount()-1}
     
     def del_row(self, widget, buttons):
+        data = []
+        for col in range(widget.columnCount()):
+            it = widget.item(widget.currentRow(), col)
+            text = it.text() if it is not None else ""
+            data.append(text)
+        self.last_action = {'del_row': {'row': widget.currentRow(), 'list': data}}
         widget.removeRow(widget.currentRow())
-        for b in buttons:
+        for b in buttons[1:]:
             b.setEnabled(False)
-        
+        buttons[0].setEnabled(True)
+          
     def save_table(self, buttons, widget=None):
-        for b in buttons:
+        for b in buttons[1:]:
             b.setEnabled(True) 
-        
+        buttons[0].setEnabled(False)
+        self.last_action = {}
+    
+    def cancel_action(self, widget, buttons):
+        if self.last_action:
+            if 'add_row' in self.last_action:
+                widget.removeRow(self.last_action['add_row'])
+            elif 'del_row' in self.last_action:
+                widget.insertRow(self.last_action['del_row']['row'])
+                for i in range(widget.columnCount()):
+                    self.tableWidget_2.setItem(self.last_action['del_row']['row'], i, QtWidgets.QTableWidgetItem(self.last_action['del_row']['list'][i]))
+            
+            for b in buttons[1:]:
+                b.setEnabled(True)
+            buttons[0].setEnabled(False)
+            self.last_action = {}
 
     def fill_comboBox(self, widget, name='Depots', id = 0):
         """
