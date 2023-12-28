@@ -352,14 +352,14 @@ class Ui_MainWindow(object):
         self.lineEdit_6.textChanged.connect(partial(self.seach_by_column, self.tableWidget_8, self.lineEdit_6))
         self.lineEdit_7.textChanged.connect(partial(self.seach_by_column, self.tableWidget, self.lineEdit_7))
 
-        self.comboBox_4.currentIndexChanged.connect(partial(self.sort_items, self.tableWidget_2, self.comboBox_4, 'Goods', None))
+        self.comboBox_4.currentIndexChanged.connect(partial(self.sort_items_by_column, self.tableWidget_2, self.comboBox_4, 'Goods', None))
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(3)
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def sort_items(self, widget, combo, name, type):
+    def sort_items_by_column(self, widget, combo, name, type):
         if combo.currentText() == 'По возрастанию':
             widget.sortByColumn(widget.currentColumn(), QtCore.Qt.AscendingOrder)
         elif combo.currentText() == 'По убыванию':
