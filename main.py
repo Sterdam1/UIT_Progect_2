@@ -27,6 +27,11 @@ class Ui_MainWindow(object):
         self.tabWidget.setObjectName("tabWidget")
         self.items = QtWidgets.QWidget()
         self.items.setObjectName("items")
+        self.comboBox_4 = QtWidgets.QComboBox(self.items)
+        self.comboBox_4.setGeometry(50, 460, 121, 31)
+        self.comboBox_4.setObjectName('comboBox_4')
+        self.comboBox_4.insertItems(0, ['По возрастанию', 'По убыванию', 'По умолчанию'])
+        self.comboBox_4.setCurrentIndex(2)
         self.lineEdit_2 = QtWidgets.QLineEdit(self.items)
         self.lineEdit_2.setGeometry(180, 460, 141, 31)
         self.lineEdit_2.setPlaceholderText('Поиск')
@@ -347,10 +352,20 @@ class Ui_MainWindow(object):
         self.lineEdit_6.textChanged.connect(partial(self.seach_by_column, self.tableWidget_8, self.lineEdit_6))
         self.lineEdit_7.textChanged.connect(partial(self.seach_by_column, self.tableWidget, self.lineEdit_7))
 
+        self.comboBox_4.currentIndexChanged.connect(partial(self.sort_items, self.tableWidget_2, self.comboBox_4, 'Goods', None))
+
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(3)
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def sort_items(self, widget, combo, name, type):
+        if combo.currentText() == 'По возрастанию':
+            widget.sortByColumn(widget.currentColumn(), QtCore.Qt.AscendingOrder)
+        elif combo.currentText() == 'По убыванию':
+            widget.sortByColumn(widget.currentColumn(), QtCore.Qt.DescendingOrder)
+        elif combo.currentText() == 'По умолчанию':
+            self.gen_table(widget=widget, name=name, type=type)
 
     def seach_by_column(self, widget, lineEdit):
         column = widget.currentColumn()
@@ -387,7 +402,7 @@ class Ui_MainWindow(object):
             b.setEnabled(False)
         buttons[0].setEnabled(True)
           
-    def save_table(self, buttons, widget=None):
+    def save_table(self, buttons):
         for b in buttons[1:]:
             b.setEnabled(True) 
         buttons[0].setEnabled(False)
@@ -501,7 +516,7 @@ class Ui_MainWindow(object):
         self.label_8.setText(_translate("MainWindow", "Подрядчики"))
         self.pushButton_24.setText(_translate("MainWindow", "Сохранить"))
         self.pushButton_25.setText(_translate("MainWindow", "Отменить"))
-        self.pushButton_26.setText(_translate("MainWindow", "Добавить"))
+        self.pushButton_26.setText(_translate("MainWindow", "Добавить"))    
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.contractors), _translate("MainWindow", "Подрядчики"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.people), _translate("MainWindow", "Контрагенты"))
         self.pushButton.setText(_translate("MainWindow", "Создать заказ"))
@@ -519,7 +534,6 @@ class Ui_MainWindow(object):
         self.label_5.setText(_translate("MainWindow", "Остатки"))
         self.comboBox_2.setPlaceholderText(_translate("MainWindow", "Выбрать склад"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.remains), _translate("MainWindow", "Остатки"))
-
 
 if __name__ == "__main__":
     import sys
