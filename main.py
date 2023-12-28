@@ -27,6 +27,10 @@ class Ui_MainWindow(object):
         self.tabWidget.setObjectName("tabWidget")
         self.items = QtWidgets.QWidget()
         self.items.setObjectName("items")
+        self.lineEdit_2 = QtWidgets.QLineEdit(self.items)
+        self.lineEdit_2.setGeometry(180, 460, 141, 31)
+        self.lineEdit_2.setPlaceholderText('Поиск')
+        self.lineEdit_2.setObjectName('lineEdit_2')
         self.pushButton_2 = QtWidgets.QPushButton(self.items)
         self.pushButton_2.setGeometry(QtCore.QRect(540, 460, 181, 31))
         self.pushButton_2.setObjectName("pushButton_2")
@@ -54,6 +58,10 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.items, "")
         self.storages = QtWidgets.QWidget()
         self.storages.setObjectName("storages")
+        self.lineEdit_3 = QtWidgets.QLineEdit(self.storages)
+        self.lineEdit_3.setGeometry(180, 460, 141, 31)
+        self.lineEdit_3.setPlaceholderText('Поиск')
+        self.lineEdit_3.setObjectName('lineEdit_3')
         self.pushButton_6 = QtWidgets.QPushButton(self.storages)
         self.pushButton_6.setGeometry(QtCore.QRect(540, 50, 181, 31))
         self.pushButton_6.setObjectName("pushButton_6")
@@ -88,6 +96,10 @@ class Ui_MainWindow(object):
         self.tabWidget_2.setObjectName("tabWidget_2")
         self.clients = QtWidgets.QWidget()
         self.clients.setObjectName("clients")
+        self.lineEdit_4 = QtWidgets.QLineEdit(self.clients)
+        self.lineEdit_4.setGeometry(180, 460, 141, 31)
+        self.lineEdit_4.setPlaceholderText('Поиск')
+        self.lineEdit_4.setObjectName('lineEdit_4')
         self.pushButton_18 = QtWidgets.QPushButton(self.clients)
         self.pushButton_18.setGeometry(QtCore.QRect(340, 50, 181, 31))
         self.pushButton_18.setObjectName("pushButton_18")
@@ -116,6 +128,10 @@ class Ui_MainWindow(object):
         self.tabWidget_2.addTab(self.clients, "")
         self.suppliers = QtWidgets.QWidget()
         self.suppliers.setObjectName("suppliers")
+        self.lineEdit_5 = QtWidgets.QLineEdit(self.suppliers)
+        self.lineEdit_5.setGeometry(180, 460, 141, 31)
+        self.lineEdit_5.setPlaceholderText('Поиск')
+        self.lineEdit_5.setObjectName('lineEdit_5')
         self.pushButton_19 = QtWidgets.QPushButton(self.suppliers)
         self.pushButton_19.setGeometry(QtCore.QRect(540, 50, 181, 31))
         self.pushButton_19.setObjectName("pushButton_19")
@@ -144,6 +160,10 @@ class Ui_MainWindow(object):
         self.tabWidget_2.addTab(self.suppliers, "")
         self.contractors = QtWidgets.QWidget()
         self.contractors.setObjectName("contractors")
+        self.lineEdit_6 = QtWidgets.QLineEdit(self.contractors)
+        self.lineEdit_6.setGeometry(180, 460, 141, 31)
+        self.lineEdit_6.setPlaceholderText('Поиск')
+        self.lineEdit_6.setObjectName('lineEdit_6')
         self.pushButton_23 = QtWidgets.QPushButton(self.contractors)
         self.pushButton_23.setGeometry(QtCore.QRect(540, 50, 181, 31))
         self.pushButton_23.setObjectName("pushButton_23")
@@ -173,6 +193,10 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.people, "")
         self.create_order = QtWidgets.QWidget()
         self.create_order.setObjectName("create_order")
+        self.lineEdit_7 = QtWidgets.QLineEdit(self.create_order)
+        self.lineEdit_7.setGeometry(380, 460, 141, 31)
+        self.lineEdit_7.setPlaceholderText('Поиск')
+        self.lineEdit_7.setObjectName('lineEdit_7')
         self.pushButton = QtWidgets.QPushButton(self.create_order)
         self.pushButton.setGeometry(QtCore.QRect(540, 460, 181, 31))
         self.pushButton.setObjectName("pushButton")
@@ -287,7 +311,6 @@ class Ui_MainWindow(object):
         self.label_12.setGeometry(QtCore.QRect(60, 560, 71, 16))
         self.label_12.setObjectName("label_12")
 
-
         # add row buttons, last param takes a list or buttons we need to disable
         self.pushButton_4.clicked.connect(partial(self.add_row, self.tableWidget_2, [self.pushButton_3, self.pushButton_5, self.pushButton_4]))
         self.pushButton_9.clicked.connect(partial(self.add_row, self.tableWidget_3, [self.pushButton_7, self.pushButton_9, self.pushButton_6]))
@@ -316,10 +339,29 @@ class Ui_MainWindow(object):
         self.pushButton_21.clicked.connect(partial(self.cancel_action, self.tableWidget_7, [self.pushButton_20, self.pushButton_22, self.pushButton_19]))
         self.pushButton_25.clicked.connect(partial(self.cancel_action, self.tableWidget_8, [self.pushButton_24, self.pushButton_26, self.pushButton_23]))
 
+        # search by column with lineEdit 
+        self.lineEdit_2.textChanged.connect(partial(self.seach_by_column, self.tableWidget_2, self.lineEdit_2))
+        self.lineEdit_3.textChanged.connect(partial(self.seach_by_column, self.tableWidget_3, self.lineEdit_3))
+        self.lineEdit_4.textChanged.connect(partial(self.seach_by_column, self.tableWidget_6, self.lineEdit_4))
+        self.lineEdit_5.textChanged.connect(partial(self.seach_by_column, self.tableWidget_7, self.lineEdit_5))
+        self.lineEdit_6.textChanged.connect(partial(self.seach_by_column, self.tableWidget_8, self.lineEdit_6))
+        self.lineEdit_7.textChanged.connect(partial(self.seach_by_column, self.tableWidget, self.lineEdit_7))
+
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(3)
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def seach_by_column(self, widget, lineEdit):
+        column = widget.currentColumn()
+        if column > 0:
+            for row in range(widget.rowCount()):
+                item = widget.item(row, column)
+                match = lineEdit.text().lower() not in item.text().lower()
+                if match:
+                    widget.hideRow(row)
+                else:
+                    widget.showRow(row)
 
     def add_row(self, widget, buttons):
         widget.insertRow(widget.rowCount())
