@@ -14,8 +14,9 @@ from functools import partial
 
 class Ui_MainWindow(object):
     def setupMainWindow(self, MainWindow):
-        self.table_items = db.get_fancy_goods(with_id=True)
+
         self.last_action = {}
+        self.listy = []
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(864, 651)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -351,11 +352,11 @@ class Ui_MainWindow(object):
         self.pushButton_23.clicked.connect(partial(self.del_row, self.tableWidget_8,  [self.pushButton_24, self.pushButton_26, self.pushButton_23]))
 
         # save buttons, last param takes a list or buttons we need to enable
-        self.pushButton_3.clicked.connect(partial(self.save_table, [self.pushButton_3, self.pushButton_5, self.pushButton_4]))
-        self.pushButton_7.clicked.connect(partial(self.save_table, [self.pushButton_7, self.pushButton_9, self.pushButton_6]))
-        self.pushButton_16.clicked.connect(partial(self.save_table, [self.pushButton_16, self.pushButton_18, self.pushButton_15]))
-        self.pushButton_20.clicked.connect(partial(self.save_table,  [self.pushButton_20, self.pushButton_22, self.pushButton_19]))
-        self.pushButton_24.clicked.connect(partial(self.save_table, [self.pushButton_24, self.pushButton_26, self.pushButton_23]))
+        self.pushButton_3.clicked.connect(partial(self.save_table, self.tableWidget_2, 'Goods', [self.pushButton_3, self.pushButton_5, self.pushButton_4]))
+        self.pushButton_7.clicked.connect(partial(self.save_table, self.tableWidget_3, 'Depots', [self.pushButton_7, self.pushButton_9, self.pushButton_6]))
+        self.pushButton_16.clicked.connect(partial(self.save_table, self.tableWidget_6, 'Contractors', [self.pushButton_16, self.pushButton_18, self.pushButton_15]))
+        self.pushButton_20.clicked.connect(partial(self.save_table, self.tableWidget_7, 'Contractors', [self.pushButton_20, self.pushButton_22, self.pushButton_19]))
+        self.pushButton_24.clicked.connect(partial(self.save_table, self.tableWidget_8, 'Contractors', [self.pushButton_24, self.pushButton_26, self.pushButton_23]))
 
         # cansel buttons
         self.pushButton_2.clicked.connect(partial(self.cancel_action, self.tableWidget_2, [self.pushButton_3, self.pushButton_5, self.pushButton_4]))
@@ -414,25 +415,31 @@ class Ui_MainWindow(object):
             b.setEnabled(False)
         buttons[0].setEnabled(True)
         self.last_action = {'add_row': widget.rowCount()-1}
-    
+        
     def del_row(self, widget, buttons):
         data = []
         for col in range(widget.columnCount()):
             it = widget.item(widget.currentRow(), col)
             text = it.text() if it is not None else ""
             data.append(text)
-        self.last_action = {'del_row': {'row': widget.currentRow(), 'list': data}}
+        self.last_action = {'del_row': {'row': widget.currentRow(), 'list': data, 'id': int(widget.item(widget.currentRow(), 0).text())}}
         widget.removeRow(widget.currentRow())
         for b in buttons[1:]:
             b.setEnabled(False)
         buttons[0].setEnabled(True)
           
-    def save_table(self, buttons):
+    def save_table(self, widget, name, buttons):
         for b in buttons[1:]:
             b.setEnabled(True) 
         buttons[0].setEnabled(False)
+        if 'add_row' in self.last_action:
+            self.listy = tuple(widget.item(widget.rowCount()-1, col).text() for col in range(widget.columnCount()))
+            db.insert(name=name, values=self.listy)
+        elif 'del_row' in self.last_action:
+            print(self.last_action['del_row']['row'], self.last_action['del_row']['id'])
+            db.del_table_content_by_ids(name=name, ids=[self.last_action['del_row']['id']])
         self.last_action = {}
-    
+
     def cancel_action(self, widget, buttons):
         if self.last_action:
             if 'add_row' in self.last_action:
@@ -474,7 +481,7 @@ class Ui_MainWindow(object):
         table_colums = db.get_rus_columns(name)
         if name == 'Goods':
             table_colums[3], table_colums[7] = 'название категории', 'название склада'
-            table_items = self.table_items 
+            table_items = db.get_fancy_goods(with_id=True) 
         else:
             table_items = db.get_table_by_name(name, with_id=True)
         # print(table_items)
