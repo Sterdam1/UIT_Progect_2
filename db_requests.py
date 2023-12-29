@@ -143,20 +143,21 @@ class DoubleDragon:
                 return req
             return [req[i][1:] for i in range(len(req))]
 
-    def del_table_content_by_ids(self, name: str, ids: list):
+    def del_table_content_by_ids(self, name: str,ids: list, id_name='id'):
         """
         delete strings from any table. required name of table and list of ids
 
         :param name: table name as string, as example 'Goods'
         :param ids: list of id, as example [1, 2, 3] or [4]
+        :param id_name: name of the id column in table
         """
         with self.con as con:
             if len(ids) > 1:
                 ids = tuple(ids)
-                con.execute(f'''DELETE FROM '{name}' WHERE id in {ids}''')
+                con.execute(f'''DELETE FROM '{name}' WHERE {id_name} in {ids}''')
             else:
                 ids = ids[0]
-                con.execute(f'''DELETE FROM '{name}' WHERE id in ({ids})''')
+                con.execute(f'''DELETE FROM '{name}' WHERE {id_name} in ({ids})''')
 
     def del_table_content_by_ids_concat(self, name: str, ids: list) -> str:
         """
