@@ -336,6 +336,11 @@ class Ui_MainWindow(object):
         self.label_12 = QtWidgets.QLabel(self.create_order)
         self.label_12.setGeometry(QtCore.QRect(60, 560, 71, 16))
         self.label_12.setObjectName("label_12")
+        self.pushButton.setEnabled(False)
+        self.pushButton.clicked.connect(self.gen_order)
+        self.lineEdit.textChanged.connect(self.order_btn_switch) # телефон
+        self.textEdit.textChanged.connect(self.order_btn_switch) # адрес
+        # self.textEdit_2 # комментарий
 
         # add row buttons, last param takes a list or buttons we need to disable
         self.pushButton_4.clicked.connect(partial(self.add_row, self.tableWidget_2, [self.pushButton_3, self.pushButton_5, self.pushButton_4]))
@@ -384,6 +389,27 @@ class Ui_MainWindow(object):
         self.tabWidget.setCurrentIndex(3)
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+
+    def gen_order(self):
+        adress = self.textEdit.toPlainText()
+        tel = self.lineEdit.text()
+        client = self.comboBox.currentText()
+        # вот сюда нужно еще товары с виджета украсть, их количества, и всё это в базу нахренячить #Андрей
+        # и соответствующие документы посоздавать
+
+    def order_btn_switch(self):
+        tel = self.lineEdit.text()
+        adress = self.textEdit.toPlainText()
+        flag = False
+        for i in range(self.tableWidget.rowCount()):
+            if self.tableWidget.item(i, self.tableWidget.columnCount()-1).text() != '0':
+                flag = True
+        if (len(tel) == 13 or (tel.isdigit() and len(tel) == 7)) \
+                and len(adress) > 5 and flag:
+            self.pushButton.setEnabled(True)
+        else:
+            self.pushButton.setEnabled(False)
 
     def sort_items_by_column(self, widget, combo, name, type):
         if combo.currentText() == 'По возрастанию':
