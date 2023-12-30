@@ -40,8 +40,8 @@ def edi_export(doctype='sell', date='', number="",
             a.extend(list(value.values()))
             ws.append(a)
 
-            total += value['amount'] * value['price']
-            goods_list += f"{key} x {value['amount']} "
+            total += float(value['amount']) * float(value['price'])
+            goods_list += f"\n{key} x {value['amount']} "
         context = {'number': number,
                    'date': date,
                    'customer': reciever,
