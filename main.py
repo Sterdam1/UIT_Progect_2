@@ -418,8 +418,22 @@ class Ui_MainWindow(object):
                    reciever=client,
                    number=str(counter+1),
                    goods=order_dict)
+
         # всё это в базу нахренячить #Андрей
         # и соответствующие документы посоздавать
+
+        # cброс полей
+        self.textEdit.clear()
+        self.lineEdit.clear()
+        self.comboBox.setCurrentText('')
+        msgbox = QtWidgets.QMessageBox()
+        msgbox.setText('Заказ создан')
+        msgbox.about(MainWindow, 'Уведомление', 'Заказ создан')
+        if self.comboBox_3.currentText():
+            self.gen_table(self.tableWidget,'Goods', ['Depots', self.comboBox_3])
+        else:
+            self.gen_table(self.tableWidget)
+        self.tabWidget.setCurrentIndex(4)  # перекид на список заказов
 
 
     def order_btn_switch(self):
