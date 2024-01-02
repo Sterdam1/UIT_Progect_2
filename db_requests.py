@@ -144,15 +144,15 @@ class DoubleDragon:
         :rtype: list
         """
         with self.con as con:
-            req = con.execute(f""" select id, good_name, price, category_name, vendor_сode, mass, properties_json, 
+            req = con.execute(f""" select Goods.id, good_name, price, category_name, vendor_сode, mass, properties_json, 
                 depot_name, flag_expired, expiration_date, amount, on_hold, doc_id from Goods 
-                INNER JOIN Category ON Goods.category_id = Category.cat_id 
-                INNER JOIN Depots ON Goods.depot_id = Depots.dep_id """).fetchall()
+                INNER JOIN Category ON Goods.category_id = Category.id 
+                INNER JOIN Depots ON Goods.depot_id = Depots.id """).fetchall()
             if with_id:
                 return req
             return [req[i][1:] for i in range(len(req))]
 
-    def del_table_content_by_ids(self, name: str,ids: list, id_name='id'):
+    def del_table_content_by_ids(self, name: str, ids: list):
         """
         delete strings from any table. required name of table and list of ids
 
@@ -163,10 +163,10 @@ class DoubleDragon:
         with self.con as con:
             if len(ids) > 1:
                 ids = tuple(ids)
-                con.execute(f'''DELETE FROM '{name}' WHERE {id_name} in {ids}''')
+                con.execute(f'''DELETE FROM '{name}' WHERE id in {ids}''')
             else:
                 ids = ids[0]
-                con.execute(f'''DELETE FROM '{name}' WHERE {id_name} in ({ids})''')
+                con.execute(f'''DELETE FROM '{name}' WHERE id in ({ids})''')
 
     def del_table_content_by_ids_concat(self, name: str, ids: list) -> str:
         """
