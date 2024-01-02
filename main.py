@@ -408,14 +408,10 @@ class Ui_MainWindow(object):
         else:
             self.last_text = widget.item(widget.currentRow(), widget.currentColumn()).text()
         
-        if self.last_text not in self.suki:
-            self.suki.append(self.last_text)
-        
-
     def cell_changed(self, widget, button):
         if 'edit_row' in self.last_action:
-            print(widget.currentItem().text(), self.last_text)
-            if widget.currentItem().text() not in self.suki and widget.currentItem().text() != self.last_text:
+            print(widget.currentItem().text(), self.last_text, self.suki)
+            if  widget.currentItem().text() != self.last_text:
                 self.last_action['edit_row'][f'{widget.currentRow()} {widget.currentColumn()}'] = {'id': int(widget.item(widget.currentRow(), 0).text()),
                                                                                             'last_text': self.last_text}
         else:
@@ -425,8 +421,6 @@ class Ui_MainWindow(object):
                                         {'id': int(widget.item(widget.currentRow(), 0).text()),
                                         'last_text': self.last_text}}}
                 
-        
-        
         # widget.item(widget.currentRow(), widget.currentColumn()).setFlags(widget.item(widget.currentRow(), widget.currentColumn()).flags() & QtCore.Qt.ItemFlag.ItemIsEditable)
         print(self.last_action['edit_row'])
         button.setEnabled(True)                                
@@ -544,7 +538,6 @@ class Ui_MainWindow(object):
             db.del_table_content_by_ids(name=name, ids=[self.last_action['del_row']['id']])
         elif 'edit_row' in self.last_action:
             columns = db.get_columns(name)
-            
             for loc in self.last_action['edit_row'].keys():
                 db.update_cell(name, self.last_action['edit_row'][loc]['id'], columns[int(loc.split(' ')[1])], 
                                widget.item(int(loc.split(' ')[0]), int(loc.split(' ')[1])).text())
@@ -558,7 +551,11 @@ class Ui_MainWindow(object):
                 widget.insertRow(self.last_action['del_row']['row'])
                 for i in range(widget.columnCount()):
                     self.tableWidget_2.setItem(self.last_action['del_row']['row'], i, QtWidgets.QTableWidgetItem(self.last_action['del_row']['list'][i]))
-            
+            elif 'edit_row' in self.last_action:
+                for item in self.last_action['edit_row']:
+                    row, col = int(item.split(" ")[0]), int(item.split(" ")[1]) 
+                    widget.setItem(row, col, QtWidgets.QTableWidgetItem(self.last_action['edit_row'][item]['last_text']))
+                    
             for b in buttons[1:]:
                 b.setEnabled(True)
             buttons[0].setEnabled(False)
