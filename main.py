@@ -16,6 +16,7 @@ from EDI import *
 class Ui_MainWindow(object):
     def setupMainWindow(self, MainWindow):
 
+        self.last_text = ''
         self.last_action = {}
         self.listy = []
         MainWindow.setObjectName("MainWindow")
@@ -387,11 +388,34 @@ class Ui_MainWindow(object):
         self.comboBox_7.currentIndexChanged.connect(partial(self.sort_items_by_column, self.tableWidget_7, self.comboBox_7, 'Contractors', 'Поставщик'))
         self.comboBox_8.currentIndexChanged.connect(partial(self.sort_items_by_column, self.tableWidget_8, self.comboBox_8, 'Contractors', 'Подрядчик'))
 
+        self.tableWidget_3.cellClicked.connect(partial(self.cell_cliked, self.tableWidget_3))
+
+        self.tableWidget_3.cellChanged.connect(partial(self.cell_changed, self.tableWidget_3, self.pushButton_7))
+
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(3)
         self.tabWidget_2.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    def cell_cliked(self, widget):
+        self.last_text = widget.item(widget.currentRow(), widget.currentColumn()).text()
+
+    def cell_changed(self, widget, button):
+        if 'edit_row' in self.last_action:
+            self.last_action['edit_row'][f'{widget.currentRow()} {widget.currentColumn()}'] = {'id': int(widget.item(widget.currentRow(), 0).text()),
+                                                                                               'last_text': self.last_text}
+        else:
+            self.last_action = {'edit_row': 
+                                    {f'{widget.currentRow()} {widget.currentColumn()}':
+                                        {'id': int(widget.item(widget.currentRow(), 0).text()),
+                                        'last_text': self.last_text}}}
+        
+        # В общем флаги не работают, но когда меняется уже измененная клетка, 
+        # то в словарь не записывается новый старый текст, так что в теории работает, но через хуй
+        widget.item(widget.currentRow(), widget.currentColumn()).setFlags(widget.item(widget.currentRow(), widget.currentColumn()).flags() | ~QtCore.Qt.ItemIsEditable)
+        print(self.last_action['edit_row'])
+        button.setEnabled(True)                                
+        
 
     def gen_order(self):
         counter = 15 # <- select max(number)+1 FROM Docs WHERE prefix = 'ПР'
@@ -503,6 +527,12 @@ class Ui_MainWindow(object):
         elif 'del_row' in self.last_action:
             print(self.last_action['del_row']['row'], self.last_action['del_row']['id'])
             db.del_table_content_by_ids(name=name, ids=[self.last_action['del_row']['id']])
+        elif 'edit_row' in self.last_action:
+            columns = db.get_columns(name)
+            
+            for loc in self.last_action['edit_row'].keys():
+                db.update_cell(name, self.last_action['edit_row'][loc]['id'], columns[int(loc.split(' ')[1])], 
+                               widget.item(int(loc.split(' ')[0]), int(loc.split(' ')[1])).text())
         self.last_action = {}
 
     def cancel_action(self, widget, buttons):
