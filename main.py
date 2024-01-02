@@ -15,7 +15,7 @@ from EDI import *
 
 class Ui_MainWindow(object):
     def setupMainWindow(self, MainWindow):
-
+        self.suki = []
         self.last_text = ''
         self.last_action = {}
         self.listy = []
@@ -390,7 +390,7 @@ class Ui_MainWindow(object):
 
         self.tableWidget_3.cellClicked.connect(partial(self.cell_cliked, self.tableWidget_3))
 
-        self.tableWidget_3.cellChanged.connect(partial(self.cell_changed, self.tableWidget_3, self.pushButton_7))
+        self.tableWidget_3.itemChanged.connect(partial(self.cell_changed, self.tableWidget_3, self.pushButton_7))
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(3)
@@ -398,21 +398,36 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def cell_cliked(self, widget):
-        self.last_text = widget.item(widget.currentRow(), widget.currentColumn()).text()
+        print(self.last_action)
+        if 'edit_row' in self.last_action:
+            row, col = int(list(self.last_action['edit_row'].keys())[-1].split(' ')[0]), int(list(self.last_action['edit_row'].keys())[-1].split(' ')[1]) 
+            if f'{widget.currentRow()} {widget.currentColumn()}' not in self.last_action['edit_row']:
+                self.last_text = widget.item(widget.currentRow(), widget.currentColumn()).text()
+                widget.item(row, col).setFlags(widget.item(row, col).flags() & QtCore.Qt.ItemFlag.ItemIsEnabled)   
+                
+        else:
+            self.last_text = widget.item(widget.currentRow(), widget.currentColumn()).text()
+        
+        if self.last_text not in self.suki:
+            self.suki.append(self.last_text)
+        
 
     def cell_changed(self, widget, button):
         if 'edit_row' in self.last_action:
-            self.last_action['edit_row'][f'{widget.currentRow()} {widget.currentColumn()}'] = {'id': int(widget.item(widget.currentRow(), 0).text()),
-                                                                                               'last_text': self.last_text}
+            print(widget.currentItem().text(), self.last_text)
+            if widget.currentItem().text() not in self.suki and widget.currentItem().text() != self.last_text:
+                self.last_action['edit_row'][f'{widget.currentRow()} {widget.currentColumn()}'] = {'id': int(widget.item(widget.currentRow(), 0).text()),
+                                                                                            'last_text': self.last_text}
         else:
+            
             self.last_action = {'edit_row': 
                                     {f'{widget.currentRow()} {widget.currentColumn()}':
                                         {'id': int(widget.item(widget.currentRow(), 0).text()),
                                         'last_text': self.last_text}}}
+                
         
-        # В общем флаги не работают, но когда меняется уже измененная клетка, 
-        # то в словарь не записывается новый старый текст, так что в теории работает, но через хуй
-        widget.item(widget.currentRow(), widget.currentColumn()).setFlags(widget.item(widget.currentRow(), widget.currentColumn()).flags() | ~QtCore.Qt.ItemIsEditable)
+        
+        # widget.item(widget.currentRow(), widget.currentColumn()).setFlags(widget.item(widget.currentRow(), widget.currentColumn()).flags() & QtCore.Qt.ItemFlag.ItemIsEditable)
         print(self.last_action['edit_row'])
         button.setEnabled(True)                                
         
@@ -671,3 +686,29 @@ if __name__ == "__main__":
     MainWindow.show()
     sys.exit(app.exec_())
 
+# #    def cell_cliked(self, widget):
+#         if 'edit_row' in self.last_action:
+#             if self.last_action['edit_row']:
+#                 row, col = int(list(self.last_action['edit_row'].keys())[-1].split(' ')[0]), int(list(self.last_action['edit_row'].keys())[-1].split(' ')[1]) 
+#                 widget.item(row, col).setFlags(widget.item(row, col).flags() & QtCore.Qt.ItemFlag.ItemIsEditable)
+#             if f'{widget.currentRow()} {widget.currentColumn()}' not in self.last_action['edit_row'].keys():         
+#                 self.last_text = widget.item(widget.currentRow(), widget.currentColumn()).text()   
+#         else:
+#             self.last_text = widget.item(widget.currentRow(), widget.currentColumn()).text()   
+
+#     def cell_changed(self, widget, button):
+#         if 'edit_row' in self.last_action:
+#             self.last_action['edit_row'][f'{widget.currentRow()} {widget.currentColumn()}'] = {'id': int(widget.item(widget.currentRow(), 0).text()),
+#                                                                                             'last_text': self.last_text}
+#         else:
+            
+#             self.last_action = {'edit_row': 
+#                                     {f'{widget.currentRow()} {widget.currentColumn()}':
+#                                         {'id': int(widget.item(widget.currentRow(), 0).text()),
+#                                         'last_text': self.last_text}}}
+                
+        
+        
+#         # widget.item(widget.currentRow(), widget.currentColumn()).setFlags(widget.item(widget.currentRow(), widget.currentColumn()).flags() & QtCore.Qt.ItemFlag.ItemIsEditable)
+#         print(self.last_action['edit_row'])
+#         button.setEnabled(True)                 
