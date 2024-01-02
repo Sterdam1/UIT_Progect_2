@@ -70,6 +70,15 @@ class DoubleDragon:
         global connect
         self.con = connect
 
+    def get_columns(self, name: str): # Написал Костя, в теории надо такая же фукнция только как fancy_columns или что-то типа того(Посвещается Андрею) 
+        """
+        get all column names
+        :param name: table name as string, as example 'Goods'
+        """
+        with self.con as con:
+            result = con.execute(f'''select * from pragma_table_info('{name}')''').fetchall()
+            return [i[1] for i in result]
+
     def get_rus_columns(self, name: str) -> list:
         """
         gets all column names in table in russian.
