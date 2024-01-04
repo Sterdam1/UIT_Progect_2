@@ -388,9 +388,19 @@ class Ui_MainWindow(object):
         self.comboBox_7.currentIndexChanged.connect(partial(self.sort_items_by_column, self.tableWidget_7, self.comboBox_7, 'Contractors', 'Поставщик'))
         self.comboBox_8.currentIndexChanged.connect(partial(self.sort_items_by_column, self.tableWidget_8, self.comboBox_8, 'Contractors', 'Подрядчик'))
 
+        # cell clicked singnal
+        self.tableWidget_2.cellClicked.connect(partial(self.cell_cliked, self.tableWidget_2))
         self.tableWidget_3.cellClicked.connect(partial(self.cell_cliked, self.tableWidget_3))
+        self.tableWidget_6.cellClicked.connect(partial(self.cell_cliked, self.tableWidget_6))
+        self.tableWidget_7.cellClicked.connect(partial(self.cell_cliked, self.tableWidget_7))
+        self.tableWidget_8.cellClicked.connect(partial(self.cell_cliked, self.tableWidget_8))
 
+        # text item changed signal
+        self.tableWidget_2.itemChanged.connect(partial(self.cell_changed, self.tableWidget_2, self.pushButton_3))
         self.tableWidget_3.itemChanged.connect(partial(self.cell_changed, self.tableWidget_3, self.pushButton_7))
+        self.tableWidget_6.itemChanged.connect(partial(self.cell_changed, self.tableWidget_6, self.pushButton_16))
+        self.tableWidget_7.itemChanged.connect(partial(self.cell_changed, self.tableWidget_7, self.pushButton_20))
+        self.tableWidget_8.itemChanged.connect(partial(self.cell_changed, self.tableWidget_8, self.pushButton_24))
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(3)
@@ -413,9 +423,8 @@ class Ui_MainWindow(object):
             print(widget.currentItem().text(), self.last_text, self.suki)
             if  widget.currentItem().text() != self.last_text:
                 self.last_action['edit_row'][f'{widget.currentRow()} {widget.currentColumn()}'] = {'id': int(widget.item(widget.currentRow(), 0).text()),
-                                                                                            'last_text': self.last_text}
+                                                                                                   'last_text': self.last_text}
         else:
-            
             self.last_action = {'edit_row': 
                                     {f'{widget.currentRow()} {widget.currentColumn()}':
                                         {'id': int(widget.item(widget.currentRow(), 0).text()),
@@ -423,8 +432,7 @@ class Ui_MainWindow(object):
                 
         # widget.item(widget.currentRow(), widget.currentColumn()).setFlags(widget.item(widget.currentRow(), widget.currentColumn()).flags() & QtCore.Qt.ItemFlag.ItemIsEditable)
         print(self.last_action['edit_row'])
-        button.setEnabled(True)                                
-        
+        button.setEnabled(True)                                 
 
     def gen_order(self):
         counter = 15 # <- select max(number)+1 FROM Docs WHERE prefix = 'ПР'
@@ -467,7 +475,6 @@ class Ui_MainWindow(object):
         else:
             self.gen_table(self.tableWidget)
         self.tabWidget.setCurrentIndex(4)  # перекид на список заказов
-
 
     def order_btn_switch(self):
         tel = self.lineEdit.text()
