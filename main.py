@@ -409,30 +409,33 @@ class Ui_MainWindow(object):
 
     def cell_cliked(self, widget):
         print(self.last_action)
-        if 'edit_row' in self.last_action:
-            row, col = int(list(self.last_action['edit_row'].keys())[-1].split(' ')[0]), int(list(self.last_action['edit_row'].keys())[-1].split(' ')[1]) 
-            if f'{widget.currentRow()} {widget.currentColumn()}' not in self.last_action['edit_row']:
+        if widget.currentItem():
+            
+            if 'edit_row' in self.last_action:
+                row, col = int(list(self.last_action['edit_row'].keys())[-1].split(' ')[0]), int(list(self.last_action['edit_row'].keys())[-1].split(' ')[1]) 
+                if f'{widget.currentRow()} {widget.currentColumn()}' not in self.last_action['edit_row']:
+                    self.last_text = widget.item(widget.currentRow(), widget.currentColumn()).text()
+                    widget.item(row, col).setFlags(widget.item(row, col).flags() & QtCore.Qt.ItemFlag.ItemIsEnabled)   
+                    
+            else:
                 self.last_text = widget.item(widget.currentRow(), widget.currentColumn()).text()
-                widget.item(row, col).setFlags(widget.item(row, col).flags() & QtCore.Qt.ItemFlag.ItemIsEnabled)   
-                
-        else:
-            self.last_text = widget.item(widget.currentRow(), widget.currentColumn()).text()
-        
+            
     def cell_changed(self, widget, button):
-        if 'edit_row' in self.last_action:
-            print(widget.currentItem().text(), self.last_text, self.suki)
-            if  widget.currentItem().text() != self.last_text:
-                self.last_action['edit_row'][f'{widget.currentRow()} {widget.currentColumn()}'] = {'id': int(widget.item(widget.currentRow(), 0).text()),
-                                                                                                   'last_text': self.last_text}
-        else:
-            self.last_action = {'edit_row': 
-                                    {f'{widget.currentRow()} {widget.currentColumn()}':
-                                        {'id': int(widget.item(widget.currentRow(), 0).text()),
-                                        'last_text': self.last_text}}}
-                
-        # widget.item(widget.currentRow(), widget.currentColumn()).setFlags(widget.item(widget.currentRow(), widget.currentColumn()).flags() & QtCore.Qt.ItemFlag.ItemIsEditable)
-        print(self.last_action['edit_row'])
-        button.setEnabled(True)                                 
+        if widget.currentColumn() > 0:
+            if 'edit_row' in self.last_action:
+                print(widget.currentItem().text(), self.last_text, self.suki)
+                if  widget.currentItem().text() != self.last_text:
+                    self.last_action['edit_row'][f'{widget.currentRow()} {widget.currentColumn()}'] = {'id': int(widget.item(widget.currentRow(), 0).text()),
+                                                                                                        'last_text': self.last_text}
+            elif self.last_action == {}:
+                self.last_action = {'edit_row': 
+                                        {f'{widget.currentRow()} {widget.currentColumn()}':
+                                            {'id': int(widget.item(widget.currentRow(), 0).text()),
+                                            'last_text': self.last_text}}}
+                    
+            # widget.item(widget.currentRow(), widget.currentColumn()).setFlags(widget.item(widget.currentRow(), widget.currentColumn()).flags() & QtCore.Qt.ItemFlag.ItemIsEditable)
+            # print(self.last_action['edit_row'])
+            button.setEnabled(True)                                 
 
     def gen_order(self):
         counter = 15 # <- select max(number)+1 FROM Docs WHERE prefix = 'ПР'
@@ -515,6 +518,7 @@ class Ui_MainWindow(object):
             item = QtWidgets.QTableWidgetItem('1')
         else:
             item = QtWidgets.QTableWidgetItem(f'{int(widget.item(widget.rowCount()-2, 0).text())+1}')
+            print(item.text())
         widget.setItem(widget.rowCount()-1, 0, QtWidgets.QTableWidgetItem(item))
         for b in buttons[1:]:
             b.setEnabled(False)
@@ -539,7 +543,7 @@ class Ui_MainWindow(object):
         buttons[0].setEnabled(False)
         if 'add_row' in self.last_action:
             self.listy = tuple(widget.item(widget.rowCount()-1, col).text() for col in range(widget.columnCount()))
-            db.insert(name=name, values=self.listy)
+            db.insert(name=name, values=self.listy[1:])
         elif 'del_row' in self.last_action:
             print(self.last_action['del_row']['row'], self.last_action['del_row']['id'])
             db.del_table_content_by_ids(name=name, ids=[self.last_action['del_row']['id']])
