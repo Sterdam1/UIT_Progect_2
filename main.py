@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from db_requests import db
 from functools import partial
 from EDI import *
+from validation import Validator
 
 class Ui_MainWindow(object):
     def setupMainWindow(self, MainWindow):
@@ -422,8 +423,8 @@ class Ui_MainWindow(object):
             
     def cell_changed(self, widget, button):
         if widget.currentColumn() > 0:
+            
             if 'edit_row' in self.last_action:
-                print(widget.currentItem().text(), self.last_text, self.suki)
                 if  widget.currentItem().text() != self.last_text:
                     self.last_action['edit_row'][f'{widget.currentRow()} {widget.currentColumn()}'] = {'id': int(widget.item(widget.currentRow(), 0).text()),
                                                                                                         'last_text': self.last_text}
@@ -432,9 +433,29 @@ class Ui_MainWindow(object):
                                         {f'{widget.currentRow()} {widget.currentColumn()}':
                                             {'id': int(widget.item(widget.currentRow(), 0).text()),
                                             'last_text': self.last_text}}}
-                    
-            # widget.item(widget.currentRow(), widget.currentColumn()).setFlags(widget.item(widget.currentRow(), widget.currentColumn()).flags() & QtCore.Qt.ItemFlag.ItemIsEditable)
-            # print(self.last_action['edit_row'])
+
+            # what the hell is this shit
+            #       []
+            #       []
+            #       []
+            #      \[]/
+            #       \/
+            #  Сделано только для цены, если не валидное значение, то меняет на старое.
+            if self.last_action:
+                column_name = widget.horizontalHeaderItem(widget.currentColumn()).text()
+                if Validator.isLike(widget.currentItem().text(), column_name) == True:
+                    print('True', widget.currentItem().text())
+                elif Validator.isLike(widget.currentItem().text(), column_name) == False:
+                    if 'edit_row' in self.last_action:
+                        row, col = int(list(self.last_action['edit_row'].keys())[-1].split(' ')[0]), int(list(self.last_action['edit_row'].keys())[-1].split(' ')[1])
+                        self.tableWidget_2.setItem(row, col, QtWidgets.QTableWidgetItem(self.last_action['edit_row'][f'{row} {col}']['last_text']))
+                        if len(self.last_action['edit_row']) > 1:
+                            self.last_action['edit_row'].pop(f'{row} {col}')
+                        else:
+                            self.last_action = {}
+                else:
+                    print('no need to validate')
+
             button.setEnabled(True)                                 
 
     def gen_order(self):
