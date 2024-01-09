@@ -21,7 +21,6 @@ class DoubleDragon:
         'dep_id': 'идентификатор склада',
         'br_id': 'идентификатор моста',
         'od_id': 'идентификатор заказа',
-        'con_id': 'идентификатор контрагента',
         'docs_id': 'идентификатор документа',
         'list_id': 'идентификатор списка товаров',
         'category_id': 'идентификатор категории',
@@ -134,7 +133,7 @@ class DoubleDragon:
         with self.con as con:
             if type(values) == str:
                 values = "'" + values + "'"
-                return con.execute(f""" select * from '{table_name}' where {by} in ({values}) """).fetchall()
+                return con.execute(f""" select * from '{table_name}' where {by} LIKE {values} """).fetchall()
             return con.execute(f""" select * from '{table_name}' where {by} in {values} """).fetchall()
 
     def get_fancy_goods(self, with_id=False) -> list:
@@ -248,7 +247,7 @@ class DoubleDragon:
         """
         Withdraws of adds back goods for certain bridge_id batch of goods_list
         """
-        goods_list = [(i[1], i[2]) for i in DoubleDragon.get_items(self, 'Goods_list', str(bridge_id), 'group_id')]
+        goods_list = [(i[1], i[2]) for i in self.get_items('Goods_list', str(bridge_id), 'group_id')]
         with self.con as con:
             for good_id, amount in goods_list:
                 if not return_goods:
@@ -264,14 +263,14 @@ class DoubleDragon:
         creates oder with set parameters and adds bridge and goods_list counterparts
         order list in [(good_id, amount), ...] like
         """
-        prices = [i[2] for i in DoubleDragon.get_items(self, 'Goods', tuple([i[0] for i in order_list]), 'id')]
+        prices = [i[2] for i in self.get_items('Goods', tuple([i[0] for i in order_list]), 'id')]
         total_price = sum([order_list[i][1] * prices[i] for i in range(len(order_list))])
-        last_id = DoubleDragon.insert(self, 'Oder',
-                                      (time_placed, delivery_time, state, total_price, driver_id, location, client_id))
-        bridge_id = DoubleDragon.insert(self, 'Bridge', (last_id, doc_id))
+        last_id = self.insert('Oder', (time_placed, delivery_time,
+                                      state, total_price, driver_id, location, client_id))
+        bridge_id = self.insert('Bridge', (last_id, doc_id))
         for good_id, amount in order_list:
-            DoubleDragon.insert(self, 'Goods_list', (good_id, amount, bridge_id))
-        DoubleDragon.goods_on_pause(self, bridge_id)
+            self.insert('Goods_list', (good_id, amount, bridge_id))
+        self.goods_on_pause(bridge_id)
 
     def goods_termination(self, bridge_id):
         """
