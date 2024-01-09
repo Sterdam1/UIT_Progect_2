@@ -69,8 +69,8 @@ listy_of_goodylist = [(1, 20, 1),
                       (12, 1, 2),
                       (14, 6, 3),
                       (16, 9, 2)]
-oder_list = [('2023-12-22 12:00:00', '2023-12-24 15:00:00', 'in transit', 63000.00, 4,
-              "Санкт-Петербург, наб. реки Мойки, д.22")]
+# oder_list = [('2023-12-22 12:00:00', '2023-12-24 15:00:00', 'in transit', 63000.00, 4,
+#               "Санкт-Петербург, наб. реки Мойки, д.22")]
 
 # creating the base
 with con:
@@ -99,7 +99,7 @@ with con:
                     CREATE TABLE IF NOT EXISTS Goods_list(
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     good_id INTEGER,
-                    amount FLOAT,
+                    amount INTEGER,
                     group_id INTEGER)
                     ''')
     print('Goods_list created')
@@ -168,10 +168,12 @@ with con:
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     time_placed TEXT,
                     delivery_time TEXT,
-                    state TEXT,
+                    state INTEGER,
                     total_price FLOAT,
                     driver_id INTEGER,
-                    location TEXT)
+                    location TEXT,
+                    client_id INTEGER
+                    )
                     ''')
     print('Oder created')
 
@@ -208,12 +210,13 @@ with con:
     # else:
     #     print('table Goods_list ready for duty')
 
-    sql_insert = '''INSERT OR IGNORE INTO Oder (time_placed, delivery_time, state, 
-    total_price, driver_id, location)  VALUES (?,?,?,?,?,?)'''
-    for i in oder_list:
-        con.execute(sql_insert, i)
-    else:
-        print('table Oder ready for duty')
+    # sql_insert = '''INSERT OR IGNORE INTO Oder (time_placed, delivery_time, state,
+    # total_price, driver_id, location)  VALUES (?,?,?,?,?,?)'''
+    # for i in oder_list:
+    #     con.execute(sql_insert, i)
+    # else:
+    #     print('table Oder ready for duty')
+
 
 
 # misc stuff
