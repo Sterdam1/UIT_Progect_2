@@ -70,7 +70,8 @@ class DoubleDragon:
         global connect
         self.con = connect
 
-    def get_columns(self, name: str): # Написал Костя, в теории надо такая же фукнция только как fancy_columns или что-то типа того(Посвещается Андрею) 
+    def get_columns(self,
+                    name: str):  # Написал Костя, в теории надо такая же фукнция только как fancy_columns или что-то типа того(Посвещается Андрею)
         """
         get all column names
         :param name: table name as string, as example 'Goods'
@@ -182,10 +183,10 @@ class DoubleDragon:
             ids = ids[0]
             return f''' DELETE FROM '{name}' WHERE id in ({ids}); '''
 
-    def insert(self, name: str, values: tuple):
+    def insert(self, name: str, values: tuple) -> int:
         """
         insert values into table. required name of table and tuple of values. id is not required
-
+        return that last id
         :param name: table name as string, as example 'Goods'
         :param values: tuple of values i.e. ('Книга', 350.0, 1, 1234, 0.5, 'Book_1.json', 1, 0, '2024-06-30', 50, 20, 0))
         """
@@ -193,6 +194,7 @@ class DoubleDragon:
             result = con.execute(f'''select * from pragma_table_info('{name}')''').fetchall()
             listy = tuple([i[1] for i in result if i[1] != 'id'])
             con.execute(f'''insert into '{name}' {listy} values {values}''')
+        return con.execute(f'''select max(id) from '{name}' ''').fetchall()[0][0]
 
     def insert_concat(self, name: str, values: tuple) -> str:
         """
@@ -207,12 +209,11 @@ class DoubleDragon:
             listy = tuple([i[1] for i in result if i[1] != 'id'])
             return f''' insert into '{name}' {listy} values {values}; '''
 
-    def insert_docs(self, doc_type='', prefix='', number='', sender='', receiver='',
+    def insert_docs(self, number, doc_type='', prefix='', sender='', receiver='',
                     date='', driver='', pass_issued='', pass_expired='', proxy='', contract_num=''):
         """
-        pretty much work in progress
-        maybe good enough?
-        all of the parameters in oder of appearance in DB
+        number required for requests to work, so it's mandatory
+        everything else can be empty string for now
         """
 
         with self.con as con:
@@ -232,6 +233,54 @@ class DoubleDragon:
                             SET '{param}' = {value}
                             WHERE id = {id} ''')
 
+    def doc_index_increment(self, doc_type):
+        """
+        Increment number for doctype, note that breaks if any numbers are empty strings
+        """
+        with self.con as con:
+            num = con.execute(f'''select max(number) + 1 FROM Docs WHERE doc_type = '{doc_type}' ''').fetchall()[0][0]
+            if not num:
+                return 1
+            return num
+
+    def goods_on_pause(self, bridge_id, return_goods=False):
+        """
+        Withdraws of adds back goods for certain bridge_id batch of goods_list
+        """
+        goods_list = [(i[1], i[2]) for i in DoubleDragon.get_items(self, 'Goods_list', str(bridge_id), 'group_id')]
+        with self.con as con:
+            for good_id, amount in goods_list:
+                if not return_goods:
+                    con.execute(
+                        f''' update Goods set amount = amount - {amount}, on_hold = on_hold + {amount} WHERE id = '{good_id}' ''')
+                else:
+                    con.execute(
+                        f''' update Goods set amount = amount + {amount}, on_hold = on_hold - {amount} WHERE id = '{good_id}' ''')
+
+    def create_oder(self, time_placed, driver_id, client_id, location, order_list, delivery_time='1 hour', state=1,
+                    doc_id=''):
+        """
+        creates oder with set parameters and adds bridge and goods_list counterparts
+        order list in [(good_id, amount), ...] like
+        """
+        prices = [i[2] for i in DoubleDragon.get_items(self, 'Goods', tuple([i[0] for i in order_list]), 'id')]
+        total_price = sum([order_list[i][1] * prices[i] for i in range(len(order_list))])
+        last_id = DoubleDragon.insert(self, 'Oder',
+                                      (time_placed, delivery_time, state, total_price, driver_id, location, client_id))
+        bridge_id = DoubleDragon.insert(self, 'Bridge', (last_id, doc_id))
+        for good_id, amount in order_list:
+            DoubleDragon.insert(self, 'Goods_list', (good_id, amount, bridge_id))
+        DoubleDragon.goods_on_pause(self, bridge_id)
+
+    def goods_termination(self, bridge_id):
+        """
+        Terminates goods from on_hold when they already shipped - i.e. final shipment of goods
+        """
+        goods_list = [(i[1], i[2]) for i in DoubleDragon.get_items(self, 'Goods_list', str(bridge_id), 'group_id')]
+        with self.con as con:
+            for good_id, amount in goods_list:
+                con.execute(
+                    f''' update Goods set on_hold = on_hold - {amount} WHERE id = '{good_id}' ''')
 
 db = DoubleDragon()
 

@@ -459,7 +459,7 @@ class Ui_MainWindow(object):
             button.setEnabled(True)                                 
 
     def gen_order(self):
-        counter = 15 # <- select max(number)+1 FROM Docs WHERE prefix = 'ПР'
+        counter = db.doc_index_increment('sell')
         adress = self.textEdit.toPlainText()
         tel = self.lineEdit.text()
         client = self.comboBox.currentText()
@@ -484,8 +484,7 @@ class Ui_MainWindow(object):
                    number=str(counter+1),
                    goods=order_dict)
 
-        # всё это в базу нахренячить #Андрей
-        # и соответствующие документы посоздавать
+
 
         # cброс полей
         self.textEdit.clear()
