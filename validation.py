@@ -7,7 +7,7 @@ class Valid:
 
     def isLike(self, text, name):
         if name.lower() in ['цена товара', "масса"]:
-            return True if re.fullmatch(pattern=r'^(?!0\d)(\d+)(\.\d*[1-9])?$', string=text) else False
+            return True if re.fullmatch(pattern=r'^(?!0\d)(\d+)(\.\d*[0-9])?$', string=text) else False
         elif name.lower() == 'свойства в формате json':
             return True if re.fullmatch(pattern=r'.+\.json$', string=text) else False
         elif name.lower() == 'дата истечения срока годности':

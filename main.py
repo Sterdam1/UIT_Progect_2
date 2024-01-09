@@ -446,18 +446,20 @@ class Ui_MainWindow(object):
                 column_name = widget.horizontalHeaderItem(widget.currentColumn()).text()
                 if Validator.isLike(widget.currentItem().text(), column_name) == True:
                     print('True', widget.currentItem().text())
+                    button.setEnabled(True)
                 elif Validator.isLike(widget.currentItem().text(), column_name) == False:
+                    print(widget.currentItem().text())
                     if 'edit_row' in self.last_action:
                         row, col = int(list(self.last_action['edit_row'].keys())[-1].split(' ')[0]), int(list(self.last_action['edit_row'].keys())[-1].split(' ')[1])
-                        self.tableWidget_2.setItem(row, col, QtWidgets.QTableWidgetItem(self.last_action['edit_row'][f'{row} {col}']['last_text']))
                         if len(self.last_action['edit_row']) > 1:
                             self.last_action['edit_row'].pop(f'{row} {col}')
                         else:
                             self.last_action = {}
+                        button.setEnabled(False) 
                 else:
+                    button.setEnabled(True) 
                     print('no need to validate')
-
-            button.setEnabled(True)                                 
+                                
 
     def gen_order(self):
         counter = db.doc_index_increment('sell')
