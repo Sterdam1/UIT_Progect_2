@@ -14,6 +14,8 @@ class Valid:
             return True if re.fullmatch(pattern=r'^\d{4}-\d{2}-\d{2}$', string=text) else False
         elif name.lower() == 'артикул':
             return True if re.fullmatch(pattern=r'^\d{4}$', string=text) else False
+        elif name.lower() == 'состояние':
+            return True if re.fullmatch(pattern=r'^[1-3]$', string=text) else False
         else:
             return None
         
