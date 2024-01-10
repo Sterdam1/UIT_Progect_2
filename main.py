@@ -14,6 +14,7 @@ from db_requests import db
 from functools import partial
 from EDI import *
 from validation import Validator
+from oder import Ui_Form
 
 class Ui_MainWindow(object):
     def setupMainWindow(self, MainWindow):
@@ -409,6 +410,9 @@ class Ui_MainWindow(object):
         self.tableWidget_8.itemChanged.connect(partial(self.cell_changed, self.tableWidget_8, self.pushButton_24))
         self.tableWidget_4.itemChanged.connect(partial(self.cell_changed, self.tableWidget_4, self.pushButton_11))
 
+        # button clicked signal
+        self.pushButton_12.clicked.connect(partial(self.order_show, self.tableWidget_4))
+
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(3)
         self.tabWidget_2.setCurrentIndex(0)
@@ -668,6 +672,17 @@ class Ui_MainWindow(object):
             for row in range(widget.rowCount()):
                 widget.setItem(row, widget.columnCount()-1, QtWidgets.QTableWidgetItem('0'))
         widget.setColumnHidden(0, True)
+
+    def order_show(self, widget):
+        selected_row = self.tableWidget_4.currentRow()
+        print(selected_row)
+        if selected_row > -1:
+            id = widget.item(selected_row, 0).text()
+            self.table = QtWidgets.QWidget()
+            self.ui_table = Ui_Form(id)
+            self.ui_table.setupUi(self.table)
+            self.table.show()
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
