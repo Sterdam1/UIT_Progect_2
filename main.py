@@ -360,6 +360,7 @@ class Ui_MainWindow(object):
         self.pushButton_15.clicked.connect(partial(self.del_row, self.tableWidget_6, [self.pushButton_16, self.pushButton_18, self.pushButton_15]))
         self.pushButton_19.clicked.connect(partial(self.del_row, self.tableWidget_7, [self.pushButton_20, self.pushButton_22, self.pushButton_19]))
         self.pushButton_23.clicked.connect(partial(self.del_row, self.tableWidget_8,  [self.pushButton_24, self.pushButton_26, self.pushButton_23]))
+        self.pushButton_10.clicked.connect(partial(self.del_row, self.tableWidget_4, [self.pushButton_11, self.pushButton_10]))
 
         # save buttons, last param takes a list or buttons we need to enable
         self.pushButton_3.clicked.connect(partial(self.save_table, self.tableWidget_2, 'Goods', [self.pushButton_3, self.pushButton_5, self.pushButton_4]))
@@ -367,6 +368,7 @@ class Ui_MainWindow(object):
         self.pushButton_16.clicked.connect(partial(self.save_table, self.tableWidget_6, 'Contractors', [self.pushButton_16, self.pushButton_18, self.pushButton_15]))
         self.pushButton_20.clicked.connect(partial(self.save_table, self.tableWidget_7, 'Contractors', [self.pushButton_20, self.pushButton_22, self.pushButton_19]))
         self.pushButton_24.clicked.connect(partial(self.save_table, self.tableWidget_8, 'Contractors', [self.pushButton_24, self.pushButton_26, self.pushButton_23]))
+        self.pushButton_11.clicked.connect(partial(self.save_table, self.tableWidget_4, 'Oder', [self.pushButton_11, self.pushButton_10, self.pushButton_14]))
 
         # cansel buttons
         self.pushButton_2.clicked.connect(partial(self.cancel_action, self.tableWidget_2, [self.pushButton_3, self.pushButton_5, self.pushButton_4]))
@@ -374,6 +376,7 @@ class Ui_MainWindow(object):
         self.pushButton_17.clicked.connect(partial(self.cancel_action, self.tableWidget_6, [self.pushButton_16, self.pushButton_18, self.pushButton_15]))
         self.pushButton_21.clicked.connect(partial(self.cancel_action, self.tableWidget_7, [self.pushButton_20, self.pushButton_22, self.pushButton_19]))
         self.pushButton_25.clicked.connect(partial(self.cancel_action, self.tableWidget_8, [self.pushButton_24, self.pushButton_26, self.pushButton_23]))
+        self.pushButton_14.clicked.connect(partial(self.cancel_action, self.tableWidget_4, [self.pushButton_11, self.pushButton_10]))
 
         # search by column with lineEdit 
         self.lineEdit_2.textChanged.connect(partial(self.seach_by_column, self.tableWidget_2, self.lineEdit_2))
@@ -396,6 +399,7 @@ class Ui_MainWindow(object):
         self.tableWidget_6.cellClicked.connect(partial(self.cell_cliked, self.tableWidget_6))
         self.tableWidget_7.cellClicked.connect(partial(self.cell_cliked, self.tableWidget_7))
         self.tableWidget_8.cellClicked.connect(partial(self.cell_cliked, self.tableWidget_8))
+        self.tableWidget_4.cellClicked.connect(partial(self.cell_cliked, self.tableWidget_4))
 
         # text item changed signal
         self.tableWidget_2.itemChanged.connect(partial(self.cell_changed, self.tableWidget_2, self.pushButton_3))
@@ -403,6 +407,7 @@ class Ui_MainWindow(object):
         self.tableWidget_6.itemChanged.connect(partial(self.cell_changed, self.tableWidget_6, self.pushButton_16))
         self.tableWidget_7.itemChanged.connect(partial(self.cell_changed, self.tableWidget_7, self.pushButton_20))
         self.tableWidget_8.itemChanged.connect(partial(self.cell_changed, self.tableWidget_8, self.pushButton_24))
+        self.tableWidget_4.itemChanged.connect(partial(self.cell_changed, self.tableWidget_4, self.pushButton_11))
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(3)
@@ -581,10 +586,16 @@ class Ui_MainWindow(object):
         if self.last_action:
             if 'add_row' in self.last_action:
                 widget.removeRow(self.last_action['add_row'])
+            
             elif 'del_row' in self.last_action:
                 widget.insertRow(self.last_action['del_row']['row'])
                 for i in range(widget.columnCount()):
-                    self.tableWidget_2.setItem(self.last_action['del_row']['row'], i, QtWidgets.QTableWidgetItem(self.last_action['del_row']['list'][i]))
+                    print(self.last_action['del_row']['list'][i])
+                    widget.setItem(self.last_action['del_row']['row'], i, QtWidgets.QTableWidgetItem(self.last_action['del_row']['list'][i]))
+                    if widget.objectName() == 'tableWidget_4':
+                        if widget.horizontalHeaderItem(i).text() != 'состояние':
+                            widget.item(self.last_action['del_row']['row'], i).setFlags(widget.item(self.last_action['del_row']['row'], i).flags() & QtCore.Qt.ItemFlag.ItemIsEnabled)
+            
             elif 'edit_row' in self.last_action:
                 for item in self.last_action['edit_row']:
                     row, col = int(item.split(" ")[0]), int(item.split(" ")[1]) 
@@ -646,6 +657,9 @@ class Ui_MainWindow(object):
             for col in range(widget.columnCount()):
                 widget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
                 widget.setItem(row, col, QtWidgets.QTableWidgetItem(str(table_items[row][col])))
+                if name == 'Oder':
+                    if widget.horizontalHeaderItem(col).text() != 'состояние':
+                        widget.item(row, col).setFlags(widget.item(row, col).flags() & QtCore.Qt.ItemFlag.ItemIsEnabled)
 
         if widget.objectName() == 'tableWidget':
             widget.insertColumn(widget.columnCount())
@@ -700,7 +714,7 @@ class Ui_MainWindow(object):
         self.pushButton_10.setText(_translate("MainWindow", "Удалить"))
         self.label_4.setText(_translate("MainWindow", "Заказы"))
         self.pushButton_11.setText(_translate("MainWindow", "Сохранить"))
-        self.pushButton_12.setText(_translate("MainWindow", "Редактировать"))
+        self.pushButton_12.setText(_translate("MainWindow", "Просмотреть"))
         self.pushButton_14.setText(_translate("MainWindow", "Отменить"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.order_list), _translate("MainWindow", "Список заказов"))
         self.pushButton_13.setText(_translate("MainWindow", "Списать товар"))
